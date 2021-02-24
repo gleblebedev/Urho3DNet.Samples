@@ -7,6 +7,7 @@ namespace Urho3DNet.Samples
     {
         private UIElement listViewHolder_;
         private Sprite logoSprite_;
+        private Sample runningSample_;
 
         public SamplesManager(Context context) : base(context)
         {
@@ -29,8 +30,19 @@ namespace Urho3DNet.Samples
 
         public override void Start()
         {
+
             var ui = Context.UI;
             var resourceCache = Context.ResourceCache;
+
+            SubscribeToEvent(E.Released, OnClickSample);
+
+            // Register an object factory for our custom Rotator component so that we can create them to scene nodes
+            //Context.RegisterFactory<Rotator>();
+
+            Context.Input.SetMouseMode(MouseMode.MmFree);
+            Context.Input.SetMouseVisible(true);
+
+            Context.Engine.CreateDebugHud().ToggleAll();
 
             Context.Renderer.DefaultZone.FogColor = new Color(0.1f, 0.2f, 0.4f, 1.0f);
 
@@ -39,14 +51,14 @@ namespace Urho3DNet.Samples
             
             ui.Root.SetDefaultStyle(resourceCache.GetResource<XMLFile>("UI/DefaultStyle.xml"));
 
-            UIElement layout = ui.Root.CreateChild(nameof(UIElement));
+            UIElement layout = ui.Root.CreateChild<UIElement>();
             listViewHolder_ = layout;
             layout.LayoutMode = LayoutMode.LmVertical;
             layout.SetAlignment(HorizontalAlignment.HaCenter, VerticalAlignment.VaCenter);
             layout.Size = new IntVector2(300, 600);
             layout.SetStyleAuto();
 
-            ListView list = (ListView)layout.CreateChild(nameof(ListView));
+            ListView list = layout.CreateChild<ListView>();
             list.MinSize = new IntVector2(300, 600);
             list.SelectOnClickEnd = true;
             list.HighlightMode = HighlightMode.HmAlways;
@@ -58,7 +70,7 @@ namespace Urho3DNet.Samples
             if (logoTexture == null)
                 return;
 
-            logoSprite_ = (Sprite)ui.Root.CreateChild(nameof(Sprite));
+            logoSprite_ = ui.Root.CreateChild<Sprite>();
             logoSprite_.Texture = (logoTexture);
             int textureWidth = logoTexture.Width;
             int textureHeight = logoTexture.Height;
@@ -74,8 +86,29 @@ namespace Urho3DNet.Samples
             base.Start();
         }
 
+        private void OnClickSample(VariantMap args)
+        {
+            StringHash sampleType = ((UIElement)args[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
+            if (sampleType.Hash == 0)
+                return;
+
+            StartSample(sampleType);
+    }
+
+        private void StartSample(StringHash sampleType)
+        {
+            UI ui = Context.UI;
+            ui.Root.RemoveAllChildren();
+            ui.SetFocusElement(null);
+
+            runningSample_ = Context.CreateObject(sampleType) as Sample;
+            if (runningSample_ != null)
+                runningSample_.Start();
+        }
+
         public override void Stop()
         {
+            Context.Engine.DumpResources(true);
             base.Stop();
         }
 
@@ -88,12 +121,12 @@ namespace Urho3DNet.Samples
         {
             Context.RegisterFactory<T>();
 
-            var button = (Button)Context.CreateObject(nameof(Button));
+            var button = Context.CreateObject<Button>();
             button.MinHeight = 30;
             button.SetStyleAuto();
             button.SetVar("SampleType", new StringHash(typeof(T).Name));
 
-            var title = (Text)button.CreateChild(nameof(Text));
+            var title = button.CreateChild<Text>();
             title.SetAlignment(HorizontalAlignment.HaCenter, VerticalAlignment.VaCenter);
             title.SetText(typeof(T).Name);
             title.SetFont(Context.ResourceCache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 30);
