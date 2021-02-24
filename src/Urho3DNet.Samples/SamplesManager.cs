@@ -82,6 +82,7 @@ namespace Urho3DNet.Samples
             logoSprite_.Priority = -100;
 
             RegisterSample<HelloWorld>();
+            RegisterSample<AnimatingScene>();
 
             base.Start();
         }
