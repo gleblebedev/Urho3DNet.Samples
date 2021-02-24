@@ -35,16 +35,16 @@ namespace Urho3DNet.Samples
 
         void CreateScene()
         {
-            scene_ = new SharedPtr<Scene>(new Scene(Context));
+            Scene = new Scene(Context);
 
             // Create the Octree component to the scene so that drawable objects can be rendered. Use default volume
             // (-1000, -1000, -1000) to (1000, 1000, 1000)
-            scene_.Value.CreateComponent<Octree>();
+            Scene.CreateComponent<Octree>();
 
             // Create a Zone component into a child scene node. The Zone controls ambient lighting and fog settings. Like the Octree,
             // it also defines its volume with a bounding box, but can be rotated (so it does not need to be aligned to the world X, Y
             // and Z axes.) Drawable objects "pick up" the zone they belong to and use it when rendering; several zones can exist
-            var zoneNode = scene_.Value.CreateChild("Zone");
+            var zoneNode = Scene.CreateChild("Zone");
             var zone = zoneNode.CreateComponent<Zone>();
             // Set same volume as the Octree, set a close bluish fog and some ambient light
             zone.SetBoundingBox(new BoundingBox(-1000.0f, 1000.0f));
@@ -57,7 +57,7 @@ namespace Urho3DNet.Samples
             const uint NUM_OBJECTS = 2000;
             for (uint i = 0; i < NUM_OBJECTS; ++i)
             {
-                var boxNode = scene_.Value.CreateChild();
+                var boxNode = Scene.CreateChild();
                 boxNode.Position = new Vector3(Random(200.0f) - 100.0f, Random(200.0f) - 100.0f, Random(200.0f) - 100.0f);
                 // Orient using random pitch, yaw and roll Euler angles
                 boxNode.Rotation = new Quaternion(Random(360.0f), Random(360.0f), Random(360.0f));
@@ -76,12 +76,12 @@ namespace Urho3DNet.Samples
 
             // Create the camera. Let the starting position be at the world origin. As the fog limits maximum visible distance, we can
             // bring the far clip plane closer for more effective culling of distant objects
-            cameraNode_ = new SharedPtr<Node>(scene_.Value.CreateChild("Camera"));
-            var camera = cameraNode_.Value.CreateComponent<Camera>();
+            CameraNode = Scene.CreateChild("Camera");
+            var camera = CameraNode.CreateComponent<Camera>();
             camera.FarClip = 100.0f;
 
             // Create a point light to the camera scene node
-            var light = cameraNode_.Value.CreateComponent<Light>();
+            var light = CameraNode.CreateComponent<Light>();
             light.LightType = LightType.LightPoint;
             light.Range = 30.0f;
         }
@@ -102,7 +102,7 @@ namespace Urho3DNet.Samples
         void SetupViewport()
         {
             // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
-            var viewport = new Viewport(Context, scene_, cameraNode_.Value.GetComponent<Camera>());
+            var viewport = new Viewport(Context, Scene, CameraNode.GetComponent<Camera>());
             Context.Renderer.SetViewport(0, viewport);
         }
 
@@ -130,17 +130,17 @@ namespace Urho3DNet.Samples
             pitch_ = MathDefs.Clamp(pitch_, -90.0f, 90.0f);
 
             // Construct new orientation for the camera scene node from yaw and pitch. Roll is fixed to zero
-            cameraNode_.Value.Rotation = new Quaternion(pitch_, yaw_, 0.0f);
+            CameraNode.Rotation = new Quaternion(pitch_, yaw_, 0.0f);
 
             // Read WASD keys and move the camera scene node to the corresponding direction if they are pressed
             if (Context.Input.GetKeyDown(Key.KeyW))
-                cameraNode_.Value.Translate(Vector3.Forward * MOVE_SPEED * timeStep);
+                CameraNode.Translate(Vector3.Forward * MOVE_SPEED * timeStep);
             if (Context.Input.GetKeyDown(Key.KeyS))
-                cameraNode_.Value.Translate(Vector3.Back * MOVE_SPEED * timeStep);
+                CameraNode.Translate(Vector3.Back * MOVE_SPEED * timeStep);
             if (Context.Input.GetKeyDown(Key.KeyA))
-                cameraNode_.Value.Translate(Vector3.Left * MOVE_SPEED * timeStep);
+                CameraNode.Translate(Vector3.Left * MOVE_SPEED * timeStep);
             if (Context.Input.GetKeyDown(Key.KeyD))
-                cameraNode_.Value.Translate(Vector3.Right * MOVE_SPEED * timeStep);
+                CameraNode.Translate(Vector3.Right * MOVE_SPEED * timeStep);
         }
 
         void HandleUpdate(StringHash eventType, VariantMap eventData)
