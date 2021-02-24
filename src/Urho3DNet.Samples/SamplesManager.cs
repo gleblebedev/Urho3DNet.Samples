@@ -69,6 +69,7 @@ namespace Urho3DNet.Samples
             logoSprite_.Opacity = 0.9f;
             logoSprite_.Priority = -100;
 
+            RegisterSample<HelloWorld>();
 
             base.Start();
         }
@@ -82,5 +83,25 @@ namespace Urho3DNet.Samples
         {
             base.Dispose(disposing);
         }
+
+        void RegisterSample<T>() where T:Urho3DNet.Object
+        {
+            Context.RegisterFactory<T>();
+
+            var button = (Button)Context.CreateObject(nameof(Button));
+            button.MinHeight = 30;
+            button.SetStyleAuto();
+            button.SetVar("SampleType", new StringHash(typeof(T).Name));
+
+            var title = (Text)button.CreateChild(nameof(Text));
+            title.SetAlignment(HorizontalAlignment.HaCenter, VerticalAlignment.VaCenter);
+            title.SetText(typeof(T).Name);
+            title.SetFont(Context.ResourceCache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 30);
+            title.SetStyleAuto();
+
+            var list = (ListView)Context.UI.Root.GetChild("SampleList", true);
+            list.AddItem(button);
+        }
+
     }
 }
