@@ -6,9 +6,11 @@ namespace Urho3DNet.Samples
     {
         private Sprite logoSprite_;
         /// Scene.
-        protected SharedPtr<Scene> scene_;
+        private SharedPtr<Scene> scene_;
+        protected Scene Scene { get { return scene_.Value; } set { scene_ = new SharedPtr<Scene>(value); } }
         /// Camera scene node.
-        protected SharedPtr<Node> cameraNode_;
+        private SharedPtr<Node> cameraNode_;
+        protected Node CameraNode { get { return cameraNode_.Value; } set { cameraNode_ = new SharedPtr<Node>(value); } }
         /// Camera yaw angle.
         protected float yaw_;
         /// Camera pitch angle.
@@ -62,7 +64,7 @@ namespace Urho3DNet.Samples
                 if (useMouseMode_ == MouseMode.MmFree)
                     Context.Input.SetMouseVisible(true);
 
-                var console = (Console)GetSubsystem("Console"); // TODO: is string literal appropiate? Can we get a generic?
+                var console = Context.GetSubsystem<Console>();
 
                 if (useMouseMode_ != MouseMode.MmAbsolute)
                 {
@@ -82,7 +84,7 @@ namespace Urho3DNet.Samples
         // If the user clicks the canvas, attempt to switch to relative mouse mode on web platform
         private void HandleMouseModeRequest(StringHash eventType, VariantMap eventData)
         {
-            var console = (Console)GetSubsystem("Console"); // TODO: is string literal appropiate? Can we get a generic?
+            var console = Context.GetSubsystem<Console>();
             if (console != null && console.IsVisible)
                 return;
             if (useMouseMode_ == MouseMode.MmAbsolute)
