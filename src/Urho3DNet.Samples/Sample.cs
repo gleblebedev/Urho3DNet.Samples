@@ -7,10 +7,10 @@ namespace Urho3DNet.Samples
         private Sprite logoSprite_;
         /// Scene.
         private SharedPtr<Scene> scene_;
-        protected Scene Scene { get { return scene_.Value; } set { scene_ = new SharedPtr<Scene>(value); } }
+        protected Scene Scene { get { return scene_?.Value; } set { scene_ = new SharedPtr<Scene>(value); } }
         /// Camera scene node.
         private SharedPtr<Node> cameraNode_;
-        protected Node CameraNode { get { return cameraNode_.Value; } set { cameraNode_ = new SharedPtr<Node>(value); } }
+        protected Node CameraNode { get { return cameraNode_?.Value; } set { cameraNode_ = new SharedPtr<Node>(value); } }
         /// Camera yaw angle.
         protected float yaw_;
         /// Camera pitch angle.
