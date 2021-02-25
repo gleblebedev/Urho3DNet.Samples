@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Urho3DNet.Samples
 {
+    [Preserve(AllMembers = true)]
     class AnimatingScene : Sample
     {
         public AnimatingScene(Context context) : base(context)
@@ -31,6 +32,12 @@ namespace Urho3DNet.Samples
 
             // Set the mouse mode to use in the sample
             InitMouseMode(MouseMode.MmRelative);
+        }
+
+        public override void Stop()
+        {
+            UnsubscribeFromEvent(E.Update);
+            base.Stop();
         }
 
         void CreateScene()

@@ -8,6 +8,7 @@ namespace Urho3DNet.Samples
         private UIElement listViewHolder_;
         private Sprite logoSprite_;
         private Sample runningSample_;
+        private bool isClosing_ = false;
 
         public SamplesManager(Context context) : base(context)
         {
@@ -36,6 +37,7 @@ namespace Urho3DNet.Samples
 
             SubscribeToEvent(E.Released, OnClickSample);
             SubscribeToEvent(E.KeyUp, OnKeyPress);
+            SubscribeToEvent(E.BeginFrame, OnFrameStart);
 
             // Register an object factory for our custom Rotator component so that we can create them to scene nodes
             //Context.RegisterFactory<Rotator>();
@@ -84,18 +86,57 @@ namespace Urho3DNet.Samples
 
             RegisterSample<HelloWorld>();
             RegisterSample<AnimatingScene>();
-
+            RegisterSample<ActionsSample>();
+            
             base.Start();
         }
 
-        private void OnKeyPress(VariantMap obj)
+        private void OnFrameStart(VariantMap obj)
         {
-            
+            if (isClosing_)
+            {
+                isClosing_ = false;
+                if (runningSample_ != null)
+                {
+                    Input input = Context.Input;
+                    UI ui = Context.UI;
+                    runningSample_.Stop();
+                    runningSample_ = null;
+                    input.SetMouseMode(MouseMode.MmFree);
+                    input.SetMouseVisible(true);
+                    ui.Cursor = null;
+                    ui.Root.RemoveAllChildren();
+                    ui.Root.AddChild(listViewHolder_);
+                    ui.Root.AddChild(logoSprite_);
+                }
+                else
+                {
+                    var console = GetSubsystem<Console>();
+                    if (console != null)
+                    {
+                        if (console.IsVisible)
+                        {
+                            console.IsVisible = false;
+                            return;
+                        }
+                    }
+
+                    Context.Engine.Exit();
+                }
+            }
         }
 
-        private void OnClickSample(VariantMap args)
+        private void OnKeyPress(VariantMap eventData)
         {
-            StringHash sampleType = ((UIElement)args[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
+            Key key = (Key)eventData[E.KeyDown.Key].Int;
+            
+            if (key == Key.KeyEscape)
+                isClosing_ = true;
+        }
+
+        private void OnClickSample(VariantMap eventData)
+        {
+            StringHash sampleType = ((UIElement)eventData[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
             if (sampleType.Hash == 0)
                 return;
 

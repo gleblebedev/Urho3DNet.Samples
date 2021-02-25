@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.225" />
+    <PackageReference Include="unofficial.Urho3DNet.Actions" Version="0.3.7.6" />
   </ItemGroup>
 
 </Project>

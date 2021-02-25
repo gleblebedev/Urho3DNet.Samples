@@ -2,6 +2,7 @@
 
 namespace Urho3DNet.Samples
 {
+    [Preserve(AllMembers = true)]
     public class Sample : Object
     {
         private Sprite logoSprite_;
@@ -29,7 +30,61 @@ namespace Urho3DNet.Samples
         public virtual void Start()
         {
             CreateLogo();
+
+            // Subscribe key down event
+            SubscribeToEvent(E.KeyDown, HandleKeyDown);
+            // Subscribe key up event
+            SubscribeToEvent(E.KeyUp, HandleKeyUp);
+            // Subscribe scene update event
+            SubscribeToEvent(E.SceneUpdate, HandleSceneUpdate);
+
         }
+
+        private void HandleSceneUpdate(VariantMap eventData)
+        {
+            
+        }
+
+        private void HandleKeyUp(VariantMap eventData)
+        {
+            
+        }
+
+        private void HandleKeyDown(VariantMap eventData)
+        {
+            Key key = (Key)eventData[E.KeyDown.Key].Int;
+
+            // Toggle console with F1 or backquote
+            if (key == Key.KeyF1 || key == Key.KeyBackquote)
+            {
+#if URHO3D_RMLUI
+                if (auto* ui = GetSubsystem<RmlUI>())
+                {
+                    if (ui->IsInputCaptured())
+                        return;
+                }
+#endif
+                var ui = GetSubsystem<UI>();
+                if (ui != null)
+                {
+                    var element = ui.FocusElement;
+                    if (element != null)
+                    {
+                        if (element.IsEditable)
+                            return;
+                    }
+                }
+                GetSubsystem<Console>()?.Toggle();
+                return;
+            }
+            // Toggle debug HUD with F2
+            else if (key == Key.KeyF2)
+            {
+                Context.Engine.CreateDebugHud().ToggleAll();
+                return;
+            }
+        }
+
         public virtual void Stop()
         {
             cameraNode_.Dispose();
