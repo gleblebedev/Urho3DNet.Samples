@@ -32,7 +32,8 @@ namespace Urho3DNet.Samples
         }
         public virtual void Stop()
         {
-
+            cameraNode_.Dispose();
+            scene_.Dispose();
         }
 
         protected void CreateLogo()

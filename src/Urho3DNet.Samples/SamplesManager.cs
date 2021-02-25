@@ -35,6 +35,7 @@ namespace Urho3DNet.Samples
             var resourceCache = Context.ResourceCache;
 
             SubscribeToEvent(E.Released, OnClickSample);
+            SubscribeToEvent(E.KeyUp, OnKeyPress);
 
             // Register an object factory for our custom Rotator component so that we can create them to scene nodes
             //Context.RegisterFactory<Rotator>();
@@ -87,6 +88,11 @@ namespace Urho3DNet.Samples
             base.Start();
         }
 
+        private void OnKeyPress(VariantMap obj)
+        {
+            
+        }
+
         private void OnClickSample(VariantMap args)
         {
             StringHash sampleType = ((UIElement)args[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
@@ -109,8 +115,19 @@ namespace Urho3DNet.Samples
 
         public override void Stop()
         {
+            StopRunningSample();
+
             Context.Engine.DumpResources(true);
             base.Stop();
+        }
+
+        private void StopRunningSample()
+        {
+            if (runningSample_ != null)
+            {
+                runningSample_.Stop();
+                runningSample_ = null;
+            }
         }
 
         protected override void Dispose(bool disposing)
