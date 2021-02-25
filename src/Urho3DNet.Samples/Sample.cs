@@ -59,12 +59,12 @@ namespace Urho3DNet.Samples
 
             var input = Context.Input;
 
-            if (GetPlatform() != "Web")
+            if (ProcessUtils.Platform != "Web")
             {
                 if (useMouseMode_ == MouseMode.MmFree)
                     Context.Input.SetMouseVisible(true);
 
-                var console = Context.GetSubsystem<Console>();
+                var console = GetSubsystem<Console>();
 
                 if (useMouseMode_ != MouseMode.MmAbsolute)
                 {
@@ -84,7 +84,7 @@ namespace Urho3DNet.Samples
         // If the user clicks the canvas, attempt to switch to relative mouse mode on web platform
         private void HandleMouseModeRequest(StringHash eventType, VariantMap eventData)
         {
-            var console = Context.GetSubsystem<Console>();
+            var console = GetSubsystem<Console>();
             if (console != null && console.IsVisible)
                 return;
             if (useMouseMode_ == MouseMode.MmAbsolute)
@@ -96,22 +96,8 @@ namespace Urho3DNet.Samples
 
         private void HandleMouseModeChange(StringHash eventType, VariantMap eventData)
         {
-            bool mouseLocked = eventData["MouseLocked"].Bool;
+            bool mouseLocked = eventData[E.MouseModeChanged.MouseLocked].Bool;
             Context.Input.SetMouseVisible(!mouseLocked);
-        }
-
-        // TODO: Fix ProcessUtils
-        protected string GetPlatform()
-        {
-            return "Windows";
-        }
-
-        // TODO: Fix MathDefs
-
-        private Random random = new Random();
-        protected float Random(float range)
-        {
-            return (float)random.NextDouble() * range;
         }
     }
 }

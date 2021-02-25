@@ -58,9 +58,9 @@ namespace Urho3DNet.Samples
             for (uint i = 0; i < NUM_OBJECTS; ++i)
             {
                 var boxNode = Scene.CreateChild();
-                boxNode.Position = new Vector3(Random(200.0f) - 100.0f, Random(200.0f) - 100.0f, Random(200.0f) - 100.0f);
+                boxNode.Position = new Vector3(MathDefs.Random(200.0f) - 100.0f, MathDefs.Random(200.0f) - 100.0f, MathDefs.Random(200.0f) - 100.0f);
                 // Orient using random pitch, yaw and roll Euler angles
-                boxNode.Rotation = new Quaternion(Random(360.0f), Random(360.0f), Random(360.0f));
+                boxNode.Rotation = new Quaternion(MathDefs.Random(360.0f), MathDefs.Random(360.0f), MathDefs.Random(360.0f));
                 var boxObject = boxNode.CreateComponent<StaticModel>();
                 boxObject.Model = Context.ResourceCache.GetResource<Model>("Models/Box.mdl");
                 boxObject.SetMaterial(Context.ResourceCache.GetResource<Material>("Materials/Stone.xml"));

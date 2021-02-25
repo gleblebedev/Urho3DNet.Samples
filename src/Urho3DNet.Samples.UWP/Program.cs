@@ -11,6 +11,7 @@ namespace Urho3DNet.Samples
         [MTAThread]
         private static void Main()
         {
+            Launcher.SdlHandleBackButton = true;
             Launcher.Run(_ => new SamplesManager(_));
         }
     }

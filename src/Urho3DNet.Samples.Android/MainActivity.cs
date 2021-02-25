@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
@@ -19,6 +20,7 @@ namespace Urho3DNet.Samples
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Launcher.SdlTrapBackButton = true;
             Launcher.Run(_ => new SamplesManager(_));
 
             base.OnCreate(savedInstanceState);
