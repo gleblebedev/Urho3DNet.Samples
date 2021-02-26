@@ -226,7 +226,7 @@ namespace Urho3DNet.Samples
         {
             var input = GetSubsystem<Input>();
 
-            if (character_ != null)
+            if (character_ != null && character_.NotExpired)
             {
                 // Clear previous controls
                 character_.Controls.Set(KinematicCharacter.CTRL_FORWARD | KinematicCharacter.CTRL_BACK | KinematicCharacter.CTRL_LEFT | KinematicCharacter.CTRL_RIGHT | KinematicCharacter.CTRL_JUMP, false);
@@ -310,7 +310,7 @@ namespace Urho3DNet.Samples
 
         private void HandlePostUpdate(VariantMap eventData)
         {
-            if (character_ == null)
+            if (character_ == null || character_.Expired)
                 return;
 
             var characterNode = character_.Node;

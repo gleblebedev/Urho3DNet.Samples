@@ -207,7 +207,7 @@ namespace Urho3DNet.Samples
 
         protected void HandleUpdate(StringHash eventType, VariantMap eventData)
         {
-            if (character_ != null)
+            if (character_ != null && character_.NotExpired)
             {
                 // Clear previous controls
                 character_.Controls.Set(Character.CTRL_FORWARD | Character.CTRL_BACK | Character.CTRL_LEFT | Character.CTRL_RIGHT | Character.CTRL_JUMP, false);
@@ -285,7 +285,7 @@ namespace Urho3DNet.Samples
 
         protected void HandlePostUpdate(StringHash eventType, VariantMap eventData)
         {
-            if (character_ == null)
+            if (character_ == null || character_.Expired)
                 return;
 
             var characterNode = character_.Node;

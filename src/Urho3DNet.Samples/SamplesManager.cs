@@ -5,9 +5,9 @@ namespace Urho3DNet.Samples
 {
     public class SamplesManager : Application
     {
-        private UIElement listViewHolder_;
-        private Sprite logoSprite_;
-        private Sample runningSample_;
+        private readonly SharedPtr<UIElement> listViewHolder_ = new SharedPtr<UIElement>(null);
+        private readonly SharedPtr<Sprite> logoSprite_ = new SharedPtr<Sprite>(null);
+        private readonly SharedPtr<Sample> runningSample_ = new SharedPtr<Sample>(null);
         private bool isClosing_ = false;
 
         public SamplesManager(Context context) : base(context)
@@ -55,7 +55,7 @@ namespace Urho3DNet.Samples
             ui.Root.SetDefaultStyle(resourceCache.GetResource<XMLFile>("UI/DefaultStyle.xml"));
 
             UIElement layout = ui.Root.CreateChild<UIElement>();
-            listViewHolder_ = layout;
+            listViewHolder_.Value = layout;
             layout.LayoutMode = LayoutMode.LmVertical;
             layout.SetAlignment(HorizontalAlignment.HaCenter, VerticalAlignment.VaCenter);
             layout.Size = new IntVector2(300, 600);
@@ -73,16 +73,17 @@ namespace Urho3DNet.Samples
             if (logoTexture == null)
                 return;
 
-            logoSprite_ = ui.Root.CreateChild<Sprite>();
-            logoSprite_.Texture = (logoTexture);
+            var logoSprite = ui.Root.CreateChild<Sprite>();
+            logoSprite_.Value = logoSprite;
+            logoSprite.Texture = (logoTexture);
             int textureWidth = logoTexture.Width;
             int textureHeight = logoTexture.Height;
-            logoSprite_.Scale = new Vector2(256.0f / textureWidth, 256.0f / textureWidth);
-            logoSprite_.Size = new IntVector2(textureWidth, textureHeight);
-            logoSprite_.HotSpot = new IntVector2(textureWidth, textureHeight);
-            logoSprite_.SetAlignment(HorizontalAlignment.HaRight,VerticalAlignment.VaBottom);
-            logoSprite_.Opacity = 0.9f;
-            logoSprite_.Priority = -100;
+            logoSprite.Scale = new Vector2(256.0f / textureWidth, 256.0f / textureWidth);
+            logoSprite.Size = new IntVector2(textureWidth, textureHeight);
+            logoSprite.HotSpot = new IntVector2(textureWidth, textureHeight);
+            logoSprite.SetAlignment(HorizontalAlignment.HaRight,VerticalAlignment.VaBottom);
+            logoSprite.Opacity = 0.9f;
+            logoSprite.Priority = -100;
 
             RegisterSample<HelloWorld>();
             RegisterSample<AnimatingScene>();
@@ -104,8 +105,9 @@ namespace Urho3DNet.Samples
                 {
                     Input input = Context.Input;
                     UI ui = Context.UI;
-                    runningSample_.Stop();
-                    runningSample_ = null;
+
+                    StopRunningSample();
+
                     input.SetMouseMode(MouseMode.MmFree);
                     input.SetMouseVisible(true);
                     ui.Cursor = null;
@@ -153,9 +155,8 @@ namespace Urho3DNet.Samples
             ui.Root.RemoveAllChildren();
             ui.SetFocusElement(null);
 
-            runningSample_ = Context.CreateObject(sampleType) as Sample;
-            if (runningSample_ != null)
-                runningSample_.Start();
+            runningSample_.Value = new SharedPtr<Sample>(Context.CreateObject(sampleType) as Sample);
+            runningSample_.Value?.Start();
         }
 
         public override void Stop()
@@ -168,10 +169,11 @@ namespace Urho3DNet.Samples
 
         private void StopRunningSample()
         {
-            if (runningSample_ != null)
+            Sample sample = runningSample_;
+            if (sample != null)
             {
-                runningSample_.Stop();
-                runningSample_ = null;
+                sample.Stop();
+                runningSample_.Dispose();
             }
         }
 
