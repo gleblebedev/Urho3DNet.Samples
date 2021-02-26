@@ -5,6 +5,8 @@ namespace Urho3DNet.Samples
     [Preserve(AllMembers = true)]
     public class Sample : Object
     {
+        public const float TOUCH_SENSITIVITY = 2.0f;
+
         private Sprite logoSprite_;
         /// Scene.
         private SharedPtr<Scene> scene_;
@@ -16,6 +18,8 @@ namespace Urho3DNet.Samples
         protected float yaw_;
         /// Camera pitch angle.
         protected float pitch_;
+        /// Flag to indicate whether touch input has been enabled.
+        protected bool touchEnabled_;
         /// Mouse mode option to use in the sample.
         protected MouseMode useMouseMode_;
 

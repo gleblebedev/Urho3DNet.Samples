@@ -88,6 +88,7 @@ namespace Urho3DNet.Samples
             RegisterSample<AnimatingScene>();
             RegisterSample<ActionsSample>();
             RegisterSample<KinematicCharacterDemo>();
+            RegisterSample<CharacterDemo>();
 
             base.Start();
         }
