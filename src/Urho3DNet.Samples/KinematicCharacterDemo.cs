@@ -138,71 +138,69 @@
 
         private void CreateCharacter()
         {
-            //            auto* cache = GetSubsystem<ResourceCache>();
+            var cache = GetSubsystem<ResourceCache>();
 
-            //            Node* objectNode = scene_.CreateChild("Jack");
-            //            objectNode.SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+            Node objectNode = Scene.CreateChild("Jack");
+            objectNode.Position = new Vector3(0.0f, 1.0f, 0.0f);
 
-            //            // spin node
-            //            Node* adjustNode = objectNode.CreateChild("AdjNode");
-            //            adjustNode.SetRotation(Quaternion(180, Vector3(0, 1, 0)));
+            // spin node
+            Node adjustNode = objectNode.CreateChild("AdjNode");
+            adjustNode.Rotation = new Quaternion(180, new Vector3(0, 1, 0));
 
-            //            // Create the rendering component + animation controller
-            //            auto * object = adjustNode.CreateComponent<AnimatedModel>();
-            //            object.SetModel(cache.GetResource<Model>("Models/Mutant/Mutant.mdl"));
-            //            object.SetMaterial(cache.GetResource<Material>("Models/Mutant/Materials/mutant_M.xml"));
-            //            object.SetCastShadows(true);
-            //            adjustNode.CreateComponent<AnimationController>();
+            // Create the rendering component + animation controller
+            var @object = adjustNode.CreateComponent<AnimatedModel>();
+            @object.SetModel(cache.GetResource<Model>("Models/Mutant/Mutant.mdl"), true);
+            @object.SetMaterial(cache.GetResource<Material>("Models/Mutant/Materials/mutant_M.xml"));
+            @object.CastShadows = true;
+            adjustNode.CreateComponent<AnimationController>();
 
-            //            // Set the head bone for manual control
-            //            object.GetSkeleton().GetBone("Mutant:Head").animated_ = false;
+            // Set the head bone for manual control
+            @object.Skeleton.GetBone("Mutant:Head").Animated = false;
 
-            //            // Create rigidbody
-            //            auto* body = objectNode.CreateComponent<RigidBody>();
-            //            body.SetCollisionLayer(1);
-            //            body.SetKinematic(true);
-            //            body.SetTrigger(true);
+            // Create rigidbody
+            var body = objectNode.CreateComponent<RigidBody>();
+            body.CollisionLayer = (1);
+            body.IsKinematic = (true);
+            body.IsTrigger = (true);
 
-            //            // Set zero angular factor so that physics doesn't turn the character on its own.
-            //            // Instead we will control the character yaw manually
-            //            body.SetAngularFactor(Vector3::ZERO);
+            // Set zero angular factor so that physics doesn't turn the character on its own.
+            // Instead we will control the character yaw manually
+            body.AngularFactor = Vector3.Zero;
 
-            //            // Set the rigidbody to signal collision also when in rest, so that we get ground collisions properly
-            //            body.SetCollisionEventMode(COLLISION_ALWAYS);
+            // Set the rigidbody to signal collision also when in rest, so that we get ground collisions properly
+            body.CollisionEventMode = CollisionEventMode.CollisionAlways;
 
-            //            // Set a capsule shape for collision
-            //            auto* shape = objectNode.CreateComponent<CollisionShape>();
-            //            shape.SetCapsule(0.7f, 1.8f, Vector3(0.0f, 0.9f, 0.0f));
+            // Set a capsule shape for collision
+            var shape = objectNode.CreateComponent<CollisionShape>();
+            shape.SetCapsule(0.7f, 1.8f, new Vector3(0.0f, 0.9f, 0.0f));
 
-            //            // Create the character logic component, which takes care of steering the rigidbody
-            //            // Remember it so that we can set the controls. Use a ea::weak_ptr because the scene hierarchy already owns it
-            //            // and keeps it alive as long as it's not removed from the hierarchy
-            //            character_ = objectNode.CreateComponent<KinematicCharacter>();
-            //            kinematicCharacter_ = objectNode.CreateComponent<KinematicCharacterController>();
+            // Create the character logic component, which takes care of steering the rigidbody
+            // Remember it so that we can set the controls. Use a ea::weak_ptr because the scene hierarchy already owns it
+            // and keeps it alive as long as it's not removed from the hierarchy
+            character_ = objectNode.CreateComponent<KinematicCharacter>();
+            kinematicCharacter_ = objectNode.CreateComponent<KinematicCharacterController>();
         }
 
         private void CreateInstructions()
         {
-            //            auto* cache = GetSubsystem<ResourceCache>();
-            //            auto* ui = GetSubsystem<UI>();
+            var cache = GetSubsystem<ResourceCache>();
+            var ui = GetSubsystem<UI>();
 
-            //            // Construct new Text object, set string to display and font to use
-            //            auto* instructionText = ui.GetRoot().CreateChild<Text>();
-            //            instructionText.SetText(
-            //                "Use WASD keys and mouse/touch to move\n"
+            // Construct new Text object, set string to display and font to use
+            var instructionText = ui.Root.CreateChild<Text>();
+            instructionText.SetText(
+                "Use WASD keys and mouse/touch to move\n"+
+                "Space to jump, F to toggle 1st/3rd person\n"+
+                "F5 to save scene, F7 to load"
+            );
+            instructionText.SetFont(cache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
+            // The text has multiple rows. Center them in relation to each other
+            instructionText.TextAlignment = HorizontalAlignment.HaCenter;
 
-            //                "Space to jump, F to toggle 1st/3rd person\n"
-
-            //                "F5 to save scene, F7 to load"
-            //            );
-            //            instructionText.SetFont(cache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
-            //            // The text has multiple rows. Center them in relation to each other
-            //            instructionText.SetTextAlignment(HA_CENTER);
-
-            //            // Position the text relative to the screen center
-            //            instructionText.SetHorizontalAlignment(HA_CENTER);
-            //            instructionText.SetVerticalAlignment(VA_CENTER);
-            //            instructionText.SetPosition(0, ui.GetRoot().GetHeight() / 4);
+            // Position the text relative to the screen center
+            instructionText.HorizontalAlignment = HorizontalAlignment.HaCenter;
+            instructionText.VerticalAlignment = VerticalAlignment.VaCenter;
+            instructionText.Position = new IntVector2(0, ui.Root.Height / 4);
         }
 
         private void SubscribeToEvents()
