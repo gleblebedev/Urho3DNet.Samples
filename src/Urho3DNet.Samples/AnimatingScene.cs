@@ -5,7 +5,7 @@ using System.Text;
 namespace Urho3DNet.Samples
 {
     [Preserve(AllMembers = true)]
-    class AnimatingScene : Sample
+    public class AnimatingScene : Sample
     {
         public AnimatingScene(Context context) : base(context)
         {
