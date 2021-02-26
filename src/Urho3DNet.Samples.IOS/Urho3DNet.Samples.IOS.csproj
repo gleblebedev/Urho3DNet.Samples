@@ -122,11 +122,6 @@
     </ImageAsset>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\content\Data\**">
-      <Link>Data/%(RecursiveDir)%(FileName)%(Extension)</Link>
-    </BundleResource>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +132,10 @@
     <Compile Include="Main.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\content\content.csproj">
+      <Project>{ca9f039d-27e1-4ae4-8d36-bf751a25311c}</Project>
+      <Name>content</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Urho3DNet.Samples\Urho3DNet.Samples.csproj">
       <Project>{12061FFC-551B-48ED-96CA-BB13DF2B8C67}</Project>
       <Name>Urho3DNetTemplate</Name>

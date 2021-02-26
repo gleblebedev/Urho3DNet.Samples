@@ -12,17 +12,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="..\content\Data\**">
-            <Link>Data/%(RecursiveDir)%(FileName)%(Extension)</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.228" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\content\content.csproj" />
       <ProjectReference Include="..\Urho3DNet.Samples\Urho3DNet.Samples.csproj" />
     </ItemGroup>
 

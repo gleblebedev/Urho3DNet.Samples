@@ -135,14 +135,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="../content/Data/**">
-      <Link>Data/%(RecursiveDir)%(FileName)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Pack>true</Pack>
-      <PackagePath>Data/%(RecursiveDir)%(FileName)%(Extension)</PackagePath>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
@@ -151,6 +143,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\content\content.csproj">
+      <Project>{ca9f039d-27e1-4ae4-8d36-bf751a25311c}</Project>
+      <Name>content</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Urho3DNet.Samples\Urho3DNet.Samples.csproj">
       <Project>{12061FFC-551B-48ED-96CA-BB13DF2B8C67}</Project>
       <Name>Urho3DNetTemplate</Name>
