@@ -69,7 +69,7 @@ namespace Urho3DNet.Samples
                 // Orient using random pitch, yaw and roll Euler angles
                 boxNode.Rotation = new Quaternion(MathDefs.Random(360.0f), MathDefs.Random(360.0f), MathDefs.Random(360.0f));
                 var boxObject = boxNode.CreateComponent<StaticModel>();
-                boxObject.Model = Context.ResourceCache.GetResource<Model>("Models/Box.mdl");
+                boxObject.SetModel(Context.ResourceCache.GetResource<Model>("Models/Box.mdl"));
                 boxObject.SetMaterial(Context.ResourceCache.GetResource<Material>("Materials/Stone.xml"));
 
                 // Add our custom Rotator component which will rotate the scene node each frame, when the scene sends its update event.

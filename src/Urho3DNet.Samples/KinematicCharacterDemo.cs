@@ -78,7 +78,7 @@
             floorNode.Position = new Vector3(0.0f, -0.5f);
             floorNode.SetScale(new Vector3(200.0f, 1.0f, 200.0f));
             var obj = floorNode.CreateComponent<StaticModel>();
-            obj.Model = cache.GetResource<Model>("Models/Box.mdl");
+            obj.SetModel(cache.GetResource<Model>("Models/Box.mdl"));
             obj.SetMaterial(cache.GetResource<Material>("Materials/Stone.xml"));
 
             {
@@ -100,14 +100,14 @@
                 objectNode.Rotation = new Quaternion(0.0f, MathDefs.Random(360.0f), 0.0f);
                 objectNode.SetScale(2.0f + MathDefs.Random(5.0f));
                 var @object = objectNode.CreateComponent<StaticModel>();
-                @object.Model = cache.GetResource<Model>("Models/Mushroom.mdl");
+                @object.SetModel(cache.GetResource<Model>("Models/Mushroom.mdl"));
                 @object.SetMaterial(cache.GetResource<Material>("Materials/Mushroom.xml"));
                 @object.CastShadows = true;
 
                 var body = objectNode.CreateComponent<RigidBody>();
                 body.CollisionLayer = 2;
                 var shape = objectNode.CreateComponent<CollisionShape>();
-                shape.SetTriangleMesh(@object.Model, 0);
+                shape.SetTriangleMesh(@object.GetModel(), 0);
             }
 
             // Create movable boxes. Let them fall from the sky at first
@@ -123,7 +123,7 @@
                     MathDefs.Random(360.0f));
                 objectNode.SetScale(scale);
                 var @object = objectNode.CreateComponent<StaticModel>();
-                @object.Model = cache.GetResource<Model>("Models/Box.mdl");
+                @object.SetModel(cache.GetResource<Model>("Models/Box.mdl"));
                 @object.SetMaterial(cache.GetResource<Material>("Materials/Stone.xml"));
                 @object.CastShadows = true;
 
