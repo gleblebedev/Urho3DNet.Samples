@@ -147,7 +147,7 @@
       <Version>6.2.10</Version>
     </PackageReference>
     <PackageReference Include="unofficial.Urho3DNet">
-      <Version>0.3.7.227</Version>
+      <Version>0.3.7.228</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

@@ -24,8 +24,8 @@ namespace Urho3DNet.Samples
             // Execute base class startup
             base.Start();
 
-            //if (touchEnabled_)
-            //    touch_ = new Touch(context_, TOUCH_SENSITIVITY);
+            if (touchEnabled_)
+                touch_ = new Touch(Context, TOUCH_SENSITIVITY);
 
             // Create static scene content
             CreateScene();
@@ -228,79 +228,79 @@ namespace Urho3DNet.Samples
 
             if (character_ != null)
             {
-            //        // Clear previous controls
-            //        character_.controls_.Set(CTRL_FORWARD | CTRL_BACK | CTRL_LEFT | CTRL_RIGHT | CTRL_JUMP, false);
+                // Clear previous controls
+                character_.Controls.Set(KinematicCharacter.CTRL_FORWARD | KinematicCharacter.CTRL_BACK | KinematicCharacter.CTRL_LEFT | KinematicCharacter.CTRL_RIGHT | KinematicCharacter.CTRL_JUMP, false);
 
-            //        // Update controls using touch utility class
-            //        if (touch_)
-            //                    touch_.UpdateTouches(character_.controls_);
+                // Update controls using touch utility class
+                if (touch_ != null)
+                    touch_.UpdateTouches(character_.Controls);
 
-            //    // Update controls using keys
-            //    auto* ui = GetSubsystem<UI>();
-            //        if (!ui.GetFocusElement())
-            //        {
-            //            if (!touch_ || !touch_.useGyroscope_)
-            //            {
-            //                character_.controls_.Set(CTRL_FORWARD, input.GetKeyDown(KEY_W));
-            //                character_.controls_.Set(CTRL_BACK, input.GetKeyDown(KEY_S));
-            //                character_.controls_.Set(CTRL_LEFT, input.GetKeyDown(KEY_A));
-            //                character_.controls_.Set(CTRL_RIGHT, input.GetKeyDown(KEY_D));
-            //            }
-            //    character_.controls_.Set(CTRL_JUMP, input.GetKeyDown(KEY_SPACE));
+                // Update controls using keys
+                var ui = GetSubsystem<UI>();
+                if (ui.FocusElement == null)
+                {
+                    if (touch_ == null || touch_.UseGyroscope == false)
+                    {
+                        character_.Controls.Set(KinematicCharacter.CTRL_FORWARD, input.GetKeyDown(Key.KeyW));
+                        character_.Controls.Set(KinematicCharacter.CTRL_BACK, input.GetKeyDown(Key.KeyS));
+                        character_.Controls.Set(KinematicCharacter.CTRL_LEFT, input.GetKeyDown(Key.KeyA));
+                        character_.Controls.Set(KinematicCharacter.CTRL_RIGHT, input.GetKeyDown(Key.KeyD));
+                    }
+                    character_.Controls.Set(KinematicCharacter.CTRL_JUMP, input.GetKeyDown(Key.KeySpace));
 
-            //            // Add character yaw & pitch from the mouse motion or touch input
-            //            if (touchEnabled_)
-            //            {
-            //                for (unsigned i = 0; i<input.GetNumTouches(); ++i)
-            //                {
-            //                    TouchState* state = input.GetTouch(i);
-            //                    if (!state.touchedElement_)    // Touch on empty space
-            //                    {
-            //                        auto* camera = cameraNode_.GetComponent<Camera>();
-            //                        if (!camera)
-            //                            return;
+                    // Add character yaw & pitch from the mouse motion or touch input
+                    if (touchEnabled_)
+                    {
+                        for (uint i = 0; i < input.NumTouches; ++i)
+                        {
+                            TouchState state = input.GetTouch(i);
+                            if (state.GetTouchedElement() == null)    // Touch on empty space
+                            {
+                                var camera = CameraNode.GetComponent<Camera>();
+                                if (camera == null)
+                                    return;
 
-            //                        auto* graphics = GetSubsystem<Graphics>();
-            //    character_.controls_.yaw_ += TOUCH_SENSITIVITY* camera.GetFov() / graphics.GetHeight() * state.delta_.x_;
-            //                        character_.controls_.pitch_ += TOUCH_SENSITIVITY* camera.GetFov() / graphics.GetHeight() * state.delta_.y_;
-            //                    }
-            //                }
-            //            }
-            //            else
-            //{
-            //    character_.controls_.yaw_ += (float)input.GetMouseMoveX() * YAW_SENSITIVITY;
-            //    character_.controls_.pitch_ += (float)input.GetMouseMoveY() * YAW_SENSITIVITY;
-            //}
-            //// Limit pitch
-            //character_.controls_.pitch_ = Clamp(character_.controls_.pitch_, -80.0f, 80.0f);
-            //// Set rotation already here so that it's updated every rendering frame instead of every physics frame
-            //character_.GetNode().SetRotation(Quaternion(character_.controls_.yaw_, Vector3::UP));
+                                var graphics = GetSubsystem<Graphics>();
+                                character_.Controls.Yaw += TOUCH_SENSITIVITY * camera.Fov / graphics.Height * state.Delta.X;
+                                character_.Controls.Pitch += TOUCH_SENSITIVITY * camera.Fov / graphics.Height * state.Delta.Y;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        character_.Controls.Yaw += (float)input.MouseMoveX * KinematicCharacter.YAW_SENSITIVITY;
+                        character_.Controls.Pitch += (float)input.MouseMoveY * KinematicCharacter.YAW_SENSITIVITY;
+                    }
+                    // Limit pitch
+                    character_.Controls.Pitch = MathDefs.Clamp(character_.Controls.Pitch, -80.0f, 80.0f);
+                    // Set rotation already here so that it's updated every rendering frame instead of every physics frame
+                    character_.Node.Rotation = new Quaternion(character_.Controls.Yaw, Vector3.Up);
 
-            //// Switch between 1st and 3rd person
-            //if (input.GetKeyPress(KEY_F))
-            //    firstPerson_ = !firstPerson_;
+                    // Switch between 1st and 3rd person
+                    if (input.GetKeyPress(Key.KeyF))
+                        firstPerson_ = !firstPerson_;
 
-            //// Turn on/off gyroscope on mobile platform
-            //if (touch_ && input.GetKeyPress(KEY_G))
-            //    touch_.useGyroscope_ = !touch_.useGyroscope_;
+                    // Turn on/off gyroscope on mobile platform
+                    if (touch_ != null && input.GetKeyPress(Key.KeyG))
+                        touch_.UseGyroscope = !touch_.UseGyroscope;
 
-            //// Check for loading / saving the scene
-            //if (input.GetKeyPress(KEY_F5))
-            //{
-            //    File saveFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/CharacterDemo.xml", FILE_WRITE);
-            //    scene_.SaveXML(saveFile);
-            //}
-            //if (input.GetKeyPress(KEY_F7))
-            //{
-            //    File loadFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/CharacterDemo.xml", FILE_READ);
-            //    scene_.LoadXML(loadFile);
-            //    // After loading we have to reacquire the weak pointer to the Character component, as it has been recreated
-            //    // Simply find the character's scene node by name as there's only one of them
-            //    Node* characterNode = scene_.GetChild("Jack", true);
-            //    if (characterNode)
-            //        character_ = characterNode.GetComponent<KinematicCharacter>();
-            //}
-            //        }
+                    // Check for loading / saving the scene
+                    if (input.GetKeyPress(Key.KeyF5))
+                    {
+                        //File saveFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/CharacterDemo.xml", FILE_WRITE);
+                        //scene_.SaveXML(saveFile);
+                    }
+                    if (input.GetKeyPress(Key.KeyF7))
+                    {
+                        //File loadFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/CharacterDemo.xml", FILE_READ);
+                        //scene_.LoadXML(loadFile);
+                        //// After loading we have to reacquire the weak pointer to the Character component, as it has been recreated
+                        //// Simply find the character's scene node by name as there's only one of them
+                        //Node* characterNode = scene_.GetChild("Jack", true);
+                        //if (characterNode)
+                        //    character_ = characterNode.GetComponent<KinematicCharacter>();
+                    }
+                }
             }
 
             // Toggle debug geometry with space

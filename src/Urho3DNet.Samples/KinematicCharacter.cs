@@ -1,40 +1,44 @@
 ﻿using System;
+using Urho3DNet;
 
 namespace Urho3DNet.Samples
 {
-    public class KinematicCharacter: LogicComponent
+    [ObjectFactory]
+    public class KinematicCharacter : LogicComponent
     {
-        const uint CTRL_FORWARD = 1;
-        const uint CTRL_BACK = 2;
-        const uint CTRL_LEFT = 4;
-        const uint CTRL_RIGHT = 8;
-        const uint CTRL_JUMP = 16;
+        public const uint CTRL_FORWARD = 1;
+        public const uint CTRL_BACK = 2;
+        public const uint CTRL_LEFT = 4;
+        public const uint CTRL_RIGHT = 8;
+        public const uint CTRL_JUMP = 16;
+        public const float YAW_SENSITIVITY = 0.1f;
 
-        const float MOVE_FORCE = 0.2f;
-        const float INAIR_MOVE_FORCE = 0.2f;
-        const float BRAKE_FORCE = 0.2f;
-        const float JUMP_FORCE = 7.0f;
-        const float YAW_SENSITIVITY = 0.1f;
-        const float INAIR_THRESHOLD_TIME = 0.1f;
+        private const float MOVE_FORCE = 0.2f;
+        private const float INAIR_MOVE_FORCE = 0.2f;
+        private const float BRAKE_FORCE = 0.2f;
+        private const float JUMP_FORCE = 7.0f;
+        private const float INAIR_THRESHOLD_TIME = 0.1f;
 
         /// Grounded flag for movement.
-        bool onGround_;
+        private bool onGround_;
+
         /// Jump flag.
-        bool okToJump_;
+        private bool okToJump_;
+
         /// In air timer. Due to possible physics inaccuracy, character can be off ground for max. 1/10 second and still be allowed to move.
-        float inAirTimer_;
+        private float inAirTimer_;
 
         // extra vars
-        Vector3 curMoveDir_;
-        bool isJumping_;
-        bool jumpStarted_;
+        private Vector3 curMoveDir_;
+        private bool isJumping_;
+        private bool jumpStarted_;
 
-        CollisionShape collisionShape_;
-        AnimationController animController_;
-        KinematicCharacterController kinematicController_;
+        private CollisionShape collisionShape_;
+        private AnimationController animController_;
+        private KinematicCharacterController kinematicController_;
 
         // moving platform data
-        MovingData[] movingData_ = new MovingData[2];
+        private readonly MovingData[] movingData_ = new MovingData[2] { MovingData.Identity, MovingData.Identity };
 
         public KinematicCharacter(Context context) : base(context)
         {
@@ -44,14 +48,14 @@ namespace Urho3DNet.Samples
 
         public Controls Controls { get; set; } = new Controls();
 
-        void DelayedStart()
+        public override void DelayedStart()
         {
             collisionShape_ = Node.GetComponent<CollisionShape>(true);
             animController_ = Node.GetComponent<AnimationController>(true);
             kinematicController_ = Node.GetComponent<KinematicCharacterController>(true);
         }
-        
-        void Start()
+
+        public override void Start()
         {
             // Component has been inserted into its scene node. Subscribe to events now
             SubscribeToEvent(E.NodeCollision, Node, HandleNodeCollision);
@@ -65,11 +69,11 @@ namespace Urho3DNet.Samples
             else
                 inAirTimer_ = 0.0f;
             // When character has been in air less than 1/10 second, it's still interpreted as being on ground
-            bool softGrounded = inAirTimer_ < INAIR_THRESHOLD_TIME;
+            var softGrounded = inAirTimer_ < INAIR_THRESHOLD_TIME;
 
             // Update movement & animation
-            Quaternion rot = Node.Rotation;
-            Vector3 moveDir = Vector3.Zero;
+            var rot = Node.Rotation;
+            var moveDir = Vector3.Zero;
             onGround_ = kinematicController_.OnGround();
 
             if (Controls.IsDown(CTRL_FORWARD))
@@ -86,24 +90,18 @@ namespace Urho3DNet.Samples
                 moveDir.Normalize();
 
             // rotate movedir
-            Vector3 velocity = rot * moveDir;
+            var velocity = rot * moveDir;
             if (onGround_)
-            {
                 curMoveDir_ = velocity;
-            }
             else
-            {   // In-air direction control is limited
+                // In-air direction control is limited
                 curMoveDir_ = curMoveDir_.Lerp(velocity, 0.03f);
-            }
 
             kinematicController_.SetWalkDirection(curMoveDir_ * (softGrounded ? MOVE_FORCE : INAIR_MOVE_FORCE));
 
             if (softGrounded)
             {
-                if (isJumping_)
-                {
-                    isJumping_ = false;
-                }
+                if (isJumping_) isJumping_ = false;
                 isJumping_ = false;
                 // Jump. Must release jump control between jumps
                 if (Controls.IsDown(CTRL_JUMP))
@@ -141,26 +139,21 @@ namespace Urho3DNet.Samples
                 {
                     const float maxDistance = 50.0f;
                     const float segmentDistance = 10.01f;
-                    PhysicsRaycastResult result = new PhysicsRaycastResult();
-                    Scene.GetComponent<PhysicsWorld>().RaycastSingleSegmented(result, new Ray(Node.Position, Vector3.Down),
-                                                                                     maxDistance, segmentDistance, 0xffff);
+                    var result = new PhysicsRaycastResult();
+                    Scene.GetComponent<PhysicsWorld>().RaycastSingleSegmented(result,
+                        new Ray(Node.Position, Vector3.Down),
+                        maxDistance, segmentDistance, 0xffff);
                     if (result.Body != null && result.Distance > 0.7f)
-                    {
                         animController_.PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, true, 0.2f);
-                    }
                 }
             }
             else
             {
                 // Play walk animation if moving on ground, otherwise fade it out
-                if ((softGrounded) && !moveDir.Equals(Vector3.Zero))
-                {
+                if (softGrounded && !moveDir.Equals(Vector3.Zero))
                     animController_.PlayExclusive("Models/Mutant/Mutant_Run.ani", 0, true, 0.2f);
-                }
                 else
-                {
                     animController_.PlayExclusive("Models/Mutant/Mutant_Idle0.ani", 0, true, 0.2f);
-                }
             }
         }
 
@@ -168,13 +161,13 @@ namespace Urho3DNet.Samples
         {
             if (movingData_[0] == movingData_[1])
             {
-                Matrix3x4 delta = movingData_[0].transform_ * movingData_[1].transform_.Inverse();
+                var delta = movingData_[0].transform_ * movingData_[1].transform_.Inverse();
 
                 // add delta
                 Vector3 kPos = default;
                 Quaternion kRot = default;
                 kinematicController_.GetTransform(ref kPos, ref kRot);
-                Matrix3x4 matKC = new Matrix3x4(kPos, kRot, Vector3.One);
+                var matKC = new Matrix3x4(kPos, kRot, Vector3.One);
 
                 // update
                 matKC = delta * matKC;
@@ -185,50 +178,46 @@ namespace Urho3DNet.Samples
             }
 
             // update node position
-            Node.WorldPosition = kinematicController_.GetPosition();
+            var nodeWorldPosition = kinematicController_.GetPosition();
+            if (nodeWorldPosition.IsNaN)
+                throw new ApplicationException("Wrong position!");
+            Node.WorldPosition = nodeWorldPosition;
 
             // shift and clear
             movingData_[1] = movingData_[0];
             movingData_[0].node_ = null;
         }
 
-        bool IsNodeMovingPlatform(Node node)
+        private bool IsNodeMovingPlatform(Node node)
         {
-            if (node == null)
-            {
-                return false;
-            }
+            if (node == null) return false;
 
-            Variant @var = node.GetVar("IsMovingPlatform");
-            return (@var != Variant.Empty && var.Bool);
+            var var = node.GetVar("IsMovingPlatform");
+            return var != Variant.Empty && var.Bool;
         }
 
-    void NodeOnMovingPlatform(Node node)
+        private void NodeOnMovingPlatform(Node node)
         {
-            if (!IsNodeMovingPlatform(node))
-            {
-                return;
-            }
+            if (!IsNodeMovingPlatform(node)) return;
 
             movingData_[0].node_ = node;
             movingData_[0].transform_ = node.WorldTransform;
         }
 
-        void HandleNodeCollision(VariantMap eventData)
+        private void HandleNodeCollision(VariantMap eventData)
         {
             // Check collision contacts and see if character is standing on ground (look for a contact that has near vertical normal)
 
             // possible moving platform trigger volume
-            var rigidBody = (RigidBody)eventData[E.NodeCollision.OtherBody].Ptr;
-            if (rigidBody.IsTrigger)
-            {
-                NodeOnMovingPlatform((Node) eventData[E.NodeCollision.OtherNode].Ptr);
-            }
+            var rigidBody = (RigidBody) eventData[E.NodeCollision.OtherBody].Ptr;
+            if (rigidBody.IsTrigger) NodeOnMovingPlatform((Node) eventData[E.NodeCollision.OtherNode].Ptr);
         }
 
 
-public struct MovingData : IEquatable<MovingData>
+        public struct MovingData : IEquatable<MovingData>
         {
+            public static readonly MovingData Identity = new MovingData(null, Matrix3x4.Identity);
+
             public bool Equals(MovingData other)
             {
                 return Equals(node_, other.node_);
@@ -241,7 +230,7 @@ public struct MovingData : IEquatable<MovingData>
 
             public override int GetHashCode()
             {
-                return (node_ != null ? node_.GetHashCode() : 0);
+                return node_ != null ? node_.GetHashCode() : 0;
             }
 
             public static bool operator ==(MovingData left, MovingData right)
@@ -262,7 +251,6 @@ public struct MovingData : IEquatable<MovingData>
 
             public Node node_;
             public Matrix3x4 transform_;
-        };
-
+        }
     }
 }

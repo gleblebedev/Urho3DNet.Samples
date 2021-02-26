@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.227" />
+      <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.228" />
     </ItemGroup>
 
     <ItemGroup>
