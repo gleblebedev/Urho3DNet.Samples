@@ -1,10 +1,17 @@
-﻿namespace Urho3DNet.Samples
+﻿using System;
+
+namespace Urho3DNet.Samples
 {
     [Preserve(AllMembers = true)]
     public class KinematicCharacterDemo : Sample
     {
+        /// Touch utility object.
+        private Touch touch_;
+
+        /// The controllable character component.
         private KinematicCharacter character_;
         private KinematicCharacterController kinematicCharacter_;
+        /// First person camera flag.
         private bool firstPerson_ = true;
         private bool drawDebug_;
 
@@ -306,42 +313,43 @@
             if (character_ == null)
                 return;
 
-            Node characterNode = character_.Node;
+            var characterNode = character_.Node;
 
             // Get camera lookat dir from character yaw + pitch
-            Quaternion rot = characterNode.Rotation;
-            //    Quaternion dir = rot * Quaternion(character_.controls_.pitch_, Vector3::RIGHT);
+            var rot = characterNode.Rotation;
+            Quaternion dir = rot * new Quaternion(character_.Controls.Pitch, Vector3.Right);
 
-            //    // Turn head to camera pitch, but limit to avoid unnatural animation
-            //    Node* headNode = characterNode.GetChild("Mutant:Head", true);
-            //    float limitPitch = Clamp(character_.controls_.pitch_, -45.0f, 45.0f);
-            //    Quaternion headDir = rot * Quaternion(limitPitch, Vector3(1.0f, 0.0f, 0.0f));
-            //    // This could be expanded to look at an arbitrary target, now just look at a point in front
-            //    Vector3 headWorldTarget = headNode.GetWorldPosition() + headDir * Vector3(0.0f, 0.0f, -1.0f);
-            //    headNode.LookAt(headWorldTarget, Vector3(0.0f, 1.0f, 0.0f));
+            // Turn head to camera pitch, but limit to avoid unnatural animation
+            var headNode = characterNode.GetChild("Mutant:Head", true);
+            float limitPitch = MathDefs.Clamp(character_.Controls.Pitch, -45.0f, 45.0f);
+            Quaternion headDir = rot * new Quaternion(limitPitch, new Vector3(1.0f, 0.0f, 0.0f));
+            // This could be expanded to look at an arbitrary target, now just look at a point in front
+            // TODO
+            // Vector3 headWorldTarget = headNode.WorldPosition + headDir * new Vector3(0.0f, 0.0f, -1.0f);
+            // headNode.LookAt(headWorldTarget, new Vector3(0.0f, 1.0f, 0.0f));
 
-            //if (firstPerson_)
-            //{
-            //    CameraNode.Position = (headNode.GetWorldPosition() + rot * Vector3(0.0f, 0.15f, 0.2f));
-            //    CameraNode.Rotation = (dir);
-            //}
-            //else
-            //{
-            //    // Third person camera: position behind the character
-            //    Vector3 aimPoint = characterNode.GetPosition() + rot * Vector3(0.0f, 1.7f, 0.0f);
+            if (firstPerson_)
+            {
+                CameraNode.Position = headNode.WorldPosition + rot * new Vector3(0.0f, 0.15f, 0.2f);
+                CameraNode.Rotation = dir;
+            }
+            else
+            {
+                // Third person camera: position behind the character
+                Vector3 aimPoint = characterNode.Position + rot * new Vector3(0.0f, 1.7f, 0.0f);
 
-            //    // Collide camera ray with static physics objects (layer bitmask 2) to ensure we see the character properly
-            //    Vector3 rayDir = dir * Vector3::BACK;
-            //    float rayDistance = touch_ ? touch_.cameraDistance_ : CAMERA_INITIAL_DIST;
-            //    PhysicsRaycastResult result;
-            //    scene_.GetComponent<PhysicsWorld>().RaycastSingle(result, Ray(aimPoint, rayDir), rayDistance, 2);
-            //    if (result.body_)
-            //        rayDistance = Min(rayDistance, result.distance_);
-            //    rayDistance = Clamp(rayDistance, CAMERA_MIN_DIST, CAMERA_MAX_DIST);
+                // Collide camera ray with static physics objects (layer bitmask 2) to ensure we see the character properly
+                Vector3 rayDir = dir * Vector3.Back;
+                float rayDistance = touch_ != null ? touch_.CameraDistance : Touch.CAMERA_INITIAL_DIST;
+                var result = new PhysicsRaycastResult();
+                Scene.GetComponent<PhysicsWorld>().RaycastSingle(result, new Ray(aimPoint, rayDir), rayDistance, 2);
+                if (result.Body != null)
+                    rayDistance = Math.Min(rayDistance, result.Distance);
+                rayDistance = MathDefs.Clamp(rayDistance, Touch.CAMERA_MIN_DIST, Touch.CAMERA_MAX_DIST);
 
-            //    cameraNode_.SetPosition(aimPoint + rayDir * rayDistance);
-            //    cameraNode_.SetRotation(dir);
-            //}
+                CameraNode.Position = aimPoint + rayDir * rayDistance;
+                CameraNode.Rotation = dir;
+            }
         }
 
 

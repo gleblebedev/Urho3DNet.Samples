@@ -23,8 +23,6 @@ namespace Urho3DNet.Samples
         /// Mouse mode option to use in the sample.
         protected MouseMode useMouseMode_;
 
-        private bool touchEnabled_;
-
 
         public Sample(Context context) : base(context)
         {
