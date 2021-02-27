@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Urho3DNet.Samples
 {
     class Character : LogicComponent

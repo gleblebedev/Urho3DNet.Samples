@@ -159,7 +159,7 @@ namespace Urho3DNet.Samples
 
             // Set zero angular factor so that physics doesn't turn the character on its own.
             // Instead we will control the character yaw manually
-            body.AngularVelocity = Vector3.Zero;
+            body.AngularFactor = Vector3.Zero;
 
             // Set the rigidbody to signal collision also when in rest, so that we get ground collisions properly
             body.CollisionEventMode = CollisionEventMode.CollisionAlways;
