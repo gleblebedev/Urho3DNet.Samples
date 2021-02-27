@@ -72,7 +72,7 @@ namespace Urho3DNet.Samples
                 var ui = GetSubsystem<UI>();
                 if (ui != null)
                 {
-                    var element = ui.FocusElement;
+                    var element = ui.GetFocusElement();
                     if (element != null)
                     {
                         if (element.IsEditable)

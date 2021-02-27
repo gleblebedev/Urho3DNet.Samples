@@ -122,7 +122,7 @@ namespace Urho3DNet.Samples
         void MoveCamera(float timeStep)
         {
             // Do not move if the UI has a focused element (the console)
-            if (Context.UI.FocusElement != null)
+            if (Context.UI.GetFocusElement() != null)
                 return;
 
             // Movement speed as world units per second

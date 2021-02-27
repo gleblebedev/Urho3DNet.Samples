@@ -43,7 +43,7 @@ namespace Urho3DNet.Samples
                 var touch2 = Context.Input.GetTouch(1);
 
                 // Check for zoom pattern (touches moving in opposite directions and on empty space)
-                if (touch1.GetTouchedElement() == null && touch2.GetTouchedElement() == null && ((touch1.Delta.Y > 0 && touch2.Delta.Y < 0) || (touch1.Delta.Y < 0 && touch2.Delta.Y > 0)))
+                if (touch1.TouchedElement == null && touch2.TouchedElement == null && ((touch1.Delta.Y > 0 && touch2.Delta.Y < 0) || (touch1.Delta.Y < 0 && touch2.Delta.Y > 0)))
                     Zoom = true;
                 else
                     Zoom = false;

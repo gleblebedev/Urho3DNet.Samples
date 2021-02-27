@@ -237,7 +237,7 @@ namespace Urho3DNet.Samples
 
                 // Update controls using keys
                 var ui = GetSubsystem<UI>();
-                if (ui.FocusElement == null)
+                if (ui.GetFocusElement() == null)
                 {
                     if (touch_ == null || touch_.UseGyroscope == false)
                     {
@@ -254,7 +254,7 @@ namespace Urho3DNet.Samples
                         for (uint i = 0; i < input.NumTouches; ++i)
                         {
                             TouchState state = input.GetTouch(i);
-                            if (state.GetTouchedElement() == null)    // Touch on empty space
+                            if (state.TouchedElement == null)    // Touch on empty space
                             {
                                 var camera = CameraNode.GetComponent<Camera>();
                                 if (camera == null)

@@ -217,7 +217,7 @@ namespace Urho3DNet.Samples
                     touch_.UpdateTouches(character_.Controls);
 
                 // Update controls using keys
-                if (Context.UI.FocusElement == null)
+                if (Context.UI.GetFocusElement() == null)
                 {
                     if (touch_ == null || !touch_.UseGyroscope)
                     {
@@ -234,7 +234,7 @@ namespace Urho3DNet.Samples
                         for (uint i = 0; i < Context.Input.NumTouches; ++i)
                         {
                             var state = Context.Input.GetTouch(i);
-                            if (state.GetTouchedElement() == null)    // Touch on empty space
+                            if (state.TouchedElement == null)    // Touch on empty space
                             {
                                 var camera = CameraNode.GetComponent<Camera>();
                                 if (camera == null)
