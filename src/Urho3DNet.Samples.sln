@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urho3DNet.Samples.IOS", "Ur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urho3DNet.Samples.UWP", "Urho3DNet.Samples.UWP\Urho3DNet.Samples.UWP.csproj", "{6B921E9D-4F6D-49B3-B8B8-7D41B891F60B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "content", "content\content.csproj", "{CA9F039D-27E1-4AE4-8D36-BF751A25311C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urho3DNet.Samples.WPF", "Urho3DNet.Samples.WPF\Urho3DNet.Samples.WPF.csproj", "{089DD6F3-6692-4085-8BD5-3EC6CB9BE165}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Urho3DNet.Samples.WinForms", "Urho3DNet.Samples.WinForms\Urho3DNet.Samples.WinForms.csproj", "{C5DBD29A-FC1E-4F6E-B468-6A7ABF59C27C}"

@@ -139,14 +139,10 @@
       <Version>6.2.10</Version>
     </PackageReference>
     <PackageReference Include="unofficial.Urho3DNet">
-      <Version>0.3.7.231</Version>
+      <Version>0.3.7.232</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\content\content.csproj">
-      <Project>{ca9f039d-27e1-4ae4-8d36-bf751a25311c}</Project>
-      <Name>content</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Urho3DNet.Samples\Urho3DNet.Samples.csproj">
       <Project>{12061FFC-551B-48ED-96CA-BB13DF2B8C67}</Project>
       <Name>Urho3DNetTemplate</Name>

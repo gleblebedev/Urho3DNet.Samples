@@ -11,11 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.231" />
+    <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.232" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\content\content.csproj" />
     <ProjectReference Include="..\Urho3DNet.Samples\Urho3DNet.Samples.csproj" />
   </ItemGroup>
 

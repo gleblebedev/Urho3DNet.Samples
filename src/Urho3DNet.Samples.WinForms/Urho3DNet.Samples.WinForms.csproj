@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
     <PropertyGroup>
         <TargetFramework>net471</TargetFramework>
@@ -12,11 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.231" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\content\content.csproj" />
+        <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.232" />
     </ItemGroup>
 
     <ItemGroup>
