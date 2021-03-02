@@ -1,5 +1,6 @@
 ﻿namespace Urho3DNet.Samples
 {
+    [ObjectFactory]
     class Rotator : LogicComponent
     {
         public Vector3 RotationSpeed { get; set; }

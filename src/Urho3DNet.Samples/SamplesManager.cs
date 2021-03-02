@@ -92,6 +92,7 @@ namespace Urho3DNet.Samples
             Context.RegisterFactory<KinematicCharacter>();
             RegisterSample<KinematicCharacterDemo>();
             RegisterSample<CharacterDemo>();
+            RegisterSample<Ragdolls>();
 
             base.Start();
         }

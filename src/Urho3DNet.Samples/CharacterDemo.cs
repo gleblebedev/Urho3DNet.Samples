@@ -2,7 +2,8 @@ using System;
 
 namespace Urho3DNet.Samples
 {
-    class CharacterDemo : Sample
+    [ObjectFactory]
+    public class CharacterDemo : Sample
     {
         /// Touch utility object.
         private Touch touch_;
@@ -207,7 +208,7 @@ namespace Urho3DNet.Samples
 
         protected void HandleUpdate(StringHash eventType, VariantMap eventData)
         {
-            if (character_ != null && character_.NotExpired)
+            if (character_ != null && character_.IsNotExpired)
             {
                 // Clear previous controls
                 character_.Controls.Set(Character.CTRL_FORWARD | Character.CTRL_BACK | Character.CTRL_LEFT | Character.CTRL_RIGHT | Character.CTRL_JUMP, false);
@@ -285,7 +286,7 @@ namespace Urho3DNet.Samples
 
         protected void HandlePostUpdate(StringHash eventType, VariantMap eventData)
         {
-            if (character_ == null || character_.Expired)
+            if (character_ == null || character_.IsExpired)
                 return;
 
             var characterNode = character_.Node;
