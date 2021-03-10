@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Urho3DNet;
 
 namespace Urho3DNet.Samples
 {
@@ -8,7 +7,7 @@ namespace Urho3DNet.Samples
         private readonly SharedPtr<UIElement> listViewHolder_ = new SharedPtr<UIElement>(null);
         private readonly SharedPtr<Sprite> logoSprite_ = new SharedPtr<Sprite>(null);
         private readonly SharedPtr<Sample> runningSample_ = new SharedPtr<Sample>(null);
-        private bool isClosing_ = false;
+        private bool isClosing_;
 
         public SamplesManager(Context context) : base(context)
         {
@@ -20,18 +19,20 @@ namespace Urho3DNet.Samples
             {
                 EngineParameters[Urho3D.EpFullScreen] = false;
                 EngineParameters[Urho3D.EpWindowResizable] = true;
+                //EngineParameters[Urho3D.EpGpuDebug] = true;
+                //EngineParameters[Urho3D.EpOpenXR] = true;
             }
             else
             {
                 EngineParameters[Urho3D.EpFullScreen] = true;
             }
+
             EngineParameters[Urho3D.EpWindowTitle] = "SamplesManager";
             base.Setup();
         }
 
         public override void Start()
         {
-
             var ui = Context.UI;
             var resourceCache = Context.ResourceCache;
 
@@ -51,17 +52,17 @@ namespace Urho3DNet.Samples
 
             Context.Input.SetMouseMode(MouseMode.MmFree);
             Context.Engine.CreateDebugHud().ToggleAll();
-            
+
             ui.Root.SetDefaultStyle(resourceCache.GetResource<XMLFile>("UI/DefaultStyle.xml"));
 
-            UIElement layout = ui.Root.CreateChild<UIElement>();
+            var layout = ui.Root.CreateChild<UIElement>();
             listViewHolder_.Value = layout;
             layout.LayoutMode = LayoutMode.LmVertical;
             layout.SetAlignment(HorizontalAlignment.HaCenter, VerticalAlignment.VaCenter);
             layout.Size = new IntVector2(300, 600);
             layout.SetStyleAuto();
 
-            ListView list = layout.CreateChild<ListView>();
+            var list = layout.CreateChild<ListView>();
             list.MinSize = new IntVector2(300, 600);
             list.SelectOnClickEnd = true;
             list.HighlightMode = HighlightMode.HmAlways;
@@ -75,26 +76,40 @@ namespace Urho3DNet.Samples
 
             var logoSprite = ui.Root.CreateChild<Sprite>();
             logoSprite_.Value = logoSprite;
-            logoSprite.Texture = (logoTexture);
-            int textureWidth = logoTexture.Width;
-            int textureHeight = logoTexture.Height;
+            logoSprite.Texture = logoTexture;
+            var textureWidth = logoTexture.Width;
+            var textureHeight = logoTexture.Height;
             logoSprite.Scale = new Vector2(256.0f / textureWidth, 256.0f / textureWidth);
             logoSprite.Size = new IntVector2(textureWidth, textureHeight);
             logoSprite.HotSpot = new IntVector2(textureWidth, textureHeight);
-            logoSprite.SetAlignment(HorizontalAlignment.HaRight,VerticalAlignment.VaBottom);
+            logoSprite.SetAlignment(HorizontalAlignment.HaRight, VerticalAlignment.VaBottom);
             logoSprite.Opacity = 0.9f;
             logoSprite.Priority = -100;
 
             RegisterSample<HelloWorld>();
             RegisterSample<AnimatingScene>();
             RegisterSample<ActionsSample>();
-            
             Context.RegisterFactory<KinematicCharacter>();
             RegisterSample<KinematicCharacterDemo>();
             RegisterSample<CharacterDemo>();
             RegisterSample<Ragdolls>();
+            RegisterSample<InverseKinematics>();
+            RegisterSample<RaycastVehicleDemo>();
 
             base.Start();
+        }
+
+        public override void Stop()
+        {
+            StopRunningSample();
+
+            Context.Engine.DumpResources(true);
+            base.Stop();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
         }
 
         private void OnFrameStart(VariantMap obj)
@@ -104,8 +119,8 @@ namespace Urho3DNet.Samples
                 isClosing_ = false;
                 if (runningSample_ != null)
                 {
-                    Input input = Context.Input;
-                    UI ui = Context.UI;
+                    var input = Context.Input;
+                    var ui = Context.UI;
 
                     StopRunningSample();
 
@@ -120,13 +135,11 @@ namespace Urho3DNet.Samples
                 {
                     var console = GetSubsystem<Console>();
                     if (console != null)
-                    {
                         if (console.IsVisible)
                         {
                             console.IsVisible = false;
                             return;
                         }
-                    }
 
                     Context.Engine.Exit();
                 }
@@ -135,37 +148,29 @@ namespace Urho3DNet.Samples
 
         private void OnKeyPress(VariantMap eventData)
         {
-            Key key = (Key)eventData[E.KeyDown.Key].Int;
-            
+            var key = (Key) eventData[E.KeyDown.Key].Int;
+
             if (key == Key.KeyEscape)
                 isClosing_ = true;
         }
 
         private void OnClickSample(VariantMap eventData)
         {
-            StringHash sampleType = ((UIElement)eventData[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
+            var sampleType = ((UIElement) eventData[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
             if (sampleType.Hash == 0)
                 return;
 
             StartSample(sampleType);
-    }
+        }
 
         private void StartSample(StringHash sampleType)
         {
-            UI ui = Context.UI;
+            var ui = Context.UI;
             ui.Root.RemoveAllChildren();
             ui.SetFocusElement(null);
 
             runningSample_.Value = new SharedPtr<Sample>(Context.CreateObject(sampleType) as Sample);
             runningSample_.Value?.Start();
-        }
-
-        public override void Stop()
-        {
-            StopRunningSample();
-
-            Context.Engine.DumpResources(true);
-            base.Stop();
         }
 
         private void StopRunningSample()
@@ -178,12 +183,7 @@ namespace Urho3DNet.Samples
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
-
-        void RegisterSample<T>() where T:Urho3DNet.Object
+        private void RegisterSample<T>() where T : Object
         {
             Context.RegisterFactory<T>();
 
@@ -198,9 +198,8 @@ namespace Urho3DNet.Samples
             title.SetFont(Context.ResourceCache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 30);
             title.SetStyleAuto();
 
-            var list = (ListView)Context.UI.Root.GetChild("SampleList", true);
+            var list = (ListView) Context.UI.Root.GetChild("SampleList", true);
             list.AddItem(button);
         }
-
     }
 }

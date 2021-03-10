@@ -1,5 +1,4 @@
 ﻿using System;
-using Urho3DNet;
 
 namespace Urho3DNet.Samples
 {
@@ -19,6 +18,9 @@ namespace Urho3DNet.Samples
         private const float JUMP_FORCE = 7.0f;
         private const float INAIR_THRESHOLD_TIME = 0.1f;
 
+        // moving platform data
+        private readonly MovingData[] movingData_ = new MovingData[2] {MovingData.Identity, MovingData.Identity};
+
         /// Grounded flag for movement.
         private bool onGround_;
 
@@ -36,9 +38,6 @@ namespace Urho3DNet.Samples
         private CollisionShape collisionShape_;
         private AnimationController animController_;
         private KinematicCharacterController kinematicController_;
-
-        // moving platform data
-        private readonly MovingData[] movingData_ = new MovingData[2] { MovingData.Identity, MovingData.Identity };
 
         public KinematicCharacter(Context context) : base(context)
         {

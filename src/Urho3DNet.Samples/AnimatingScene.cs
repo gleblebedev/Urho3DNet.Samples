@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Urho3DNet.Samples
+﻿namespace Urho3DNet.Samples
 {
     [Preserve(AllMembers = true)]
     public class AnimatingScene : Sample
@@ -40,7 +36,7 @@ namespace Urho3DNet.Samples
             base.Stop();
         }
 
-        void CreateScene()
+        private void CreateScene()
         {
             Scene = new Scene(Context);
 
@@ -65,9 +61,11 @@ namespace Urho3DNet.Samples
             for (uint i = 0; i < NUM_OBJECTS; ++i)
             {
                 var boxNode = Scene.CreateChild();
-                boxNode.Position = new Vector3(MathDefs.Random(200.0f) - 100.0f, MathDefs.Random(200.0f) - 100.0f, MathDefs.Random(200.0f) - 100.0f);
+                boxNode.Position = new Vector3(MathDefs.Random(200.0f) - 100.0f, MathDefs.Random(200.0f) - 100.0f,
+                    MathDefs.Random(200.0f) - 100.0f);
                 // Orient using random pitch, yaw and roll Euler angles
-                boxNode.Rotation = new Quaternion(MathDefs.Random(360.0f), MathDefs.Random(360.0f), MathDefs.Random(360.0f));
+                boxNode.Rotation = new Quaternion(MathDefs.Random(360.0f), MathDefs.Random(360.0f),
+                    MathDefs.Random(360.0f));
                 var boxObject = boxNode.CreateComponent<StaticModel>();
                 boxObject.SetModel(Context.ResourceCache.GetResource<Model>("Models/Box.mdl"));
                 boxObject.SetMaterial(Context.ResourceCache.GetResource<Material>("Materials/Stone.xml"));
@@ -93,7 +91,7 @@ namespace Urho3DNet.Samples
             light.Range = 30.0f;
         }
 
-        void CreateInstructions()
+        private void CreateInstructions()
         {
             // Construct new Text object, set string to display and font to use
             var instructionText = Context.UI.Root.CreateChild<Text>();
@@ -106,20 +104,20 @@ namespace Urho3DNet.Samples
             instructionText.Position = new IntVector2(0, Context.UI.Root.Height / 4);
         }
 
-        void SetupViewport()
+        private void SetupViewport()
         {
             // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
             var viewport = new Viewport(Context, Scene, CameraNode.GetComponent<Camera>());
             Context.Renderer.SetViewport(0, viewport);
         }
 
-        void SubscribeToEvents()
+        private void SubscribeToEvents()
         {
             // Subscribe HandleUpdate() function for processing update events
             SubscribeToEvent(E.Update, HandleUpdate);
         }
 
-        void MoveCamera(float timeStep)
+        private void MoveCamera(float timeStep)
         {
             // Do not move if the UI has a focused element (the console)
             if (Context.UI.GetFocusElement() != null)
@@ -131,7 +129,7 @@ namespace Urho3DNet.Samples
             const float MOUSE_SENSITIVITY = 0.1f;
 
             // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
-            IntVector2 mouseMove = Context.Input.MouseMove;
+            var mouseMove = Context.Input.MouseMove;
             yaw_ += MOUSE_SENSITIVITY * mouseMove.X;
             pitch_ += MOUSE_SENSITIVITY * mouseMove.Y;
             pitch_ = MathDefs.Clamp(pitch_, -90.0f, 90.0f);
@@ -150,10 +148,10 @@ namespace Urho3DNet.Samples
                 CameraNode.Translate(Vector3.Right * MOVE_SPEED * timeStep);
         }
 
-        void HandleUpdate(StringHash eventType, VariantMap eventData)
+        private void HandleUpdate(StringHash eventType, VariantMap eventData)
         {
             // Take the frame time step, which is stored as a float
-            float timeStep = eventData["TimeStep"].Float;
+            var timeStep = eventData["TimeStep"].Float;
 
             // Move the camera, scale movement with time step
             MoveCamera(timeStep);

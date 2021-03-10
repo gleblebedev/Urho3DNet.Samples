@@ -1,8 +1,6 @@
-using System.Diagnostics;
-
 namespace Urho3DNet.Samples
 {
-    class Character : LogicComponent
+    internal class Character : LogicComponent
     {
         public const uint CTRL_FORWARD = 1;
         public const uint CTRL_BACK = 2;
@@ -17,19 +15,12 @@ namespace Urho3DNet.Samples
         public const float YAW_SENSITIVITY = 0.1f;
         public const float INAIR_THRESHOLD_TIME = 0.1f;
 
-        /// Movement controls. Assigned by the main program each frame.
-        public Controls Controls { get; set; } = new Controls();
-        [SerializeField(Name = "Controls Yaw")]
-        private float InternalControlsYaw { get { return Controls.Yaw; } set { Controls.Yaw = value; } }
-        [SerializeField(Name = "Controls Pitch")]
-        private float InternalControlsPitch { get { return Controls.Pitch; } set { Controls.Pitch = value; } }
-
         /// Grounded flag for movement.
-        [SerializeField(Name = "On Ground")]
-        private bool onGround;
+        [SerializeField(Name = "On Ground")] private bool onGround;
+
         /// Jump flag.
-        [SerializeField(Name = "OK To Jump")]
-        private bool okToJump = true;
+        [SerializeField(Name = "OK To Jump")] private bool okToJump = true;
+
         /// In air timer. Due to possible physics inaccuracy, character can be off ground for max. 1/10 second and still be allowed to move.
         [SerializeField(Name = "In Air Timer")]
         private float inAirTimer;
@@ -40,7 +31,24 @@ namespace Urho3DNet.Samples
             UpdateEventMask = UpdateEvent.UseFixedupdate;
         }
 
-        public static new void RegisterObject(Context context)
+        /// Movement controls. Assigned by the main program each frame.
+        public Controls Controls { get; set; } = new Controls();
+
+        [SerializeField(Name = "Controls Yaw")]
+        private float InternalControlsYaw
+        {
+            get => Controls.Yaw;
+            set => Controls.Yaw = value;
+        }
+
+        [SerializeField(Name = "Controls Pitch")]
+        private float InternalControlsPitch
+        {
+            get => Controls.Pitch;
+            set => Controls.Pitch = value;
+        }
+
+        public new static void RegisterObject(Context context)
         {
             context.RegisterFactory<Character>();
         }
@@ -63,11 +71,11 @@ namespace Urho3DNet.Samples
             else
                 inAirTimer = 0.0f;
             // When character has been in air less than 1/10 second, it's still interpreted as being on ground
-            bool softGrounded = inAirTimer < INAIR_THRESHOLD_TIME;
+            var softGrounded = inAirTimer < INAIR_THRESHOLD_TIME;
 
             // Update movement & animation
             var rot = Node.Rotation;
-            Vector3 moveDir = Vector3.Zero;
+            var moveDir = Vector3.Zero;
             var velocity = body.LinearVelocity;
             // Velocity on the XZ plane
             var planeVelocity = new Vector3(velocity.X, 0.0f, velocity.Z);
@@ -91,7 +99,7 @@ namespace Urho3DNet.Samples
             if (softGrounded)
             {
                 // When on ground, apply a braking force to limit maximum ground velocity
-                Vector3 brakeForce = -planeVelocity * BRAKE_FORCE;
+                var brakeForce = -planeVelocity * BRAKE_FORCE;
                 body.ApplyImpulse(brakeForce); // TODO: something is going wrong here
 
                 // Jump. Must release jump control between jumps
@@ -105,7 +113,9 @@ namespace Urho3DNet.Samples
                     }
                 }
                 else
+                {
                     okToJump = true;
+                }
             }
 
             if (!onGround)
@@ -135,17 +145,17 @@ namespace Urho3DNet.Samples
 
             while (!contacts.IsEof())
             {
-                Vector3 contactPosition = contacts.ReadVector3();
-                Vector3 contactNormal = contacts.ReadVector3();
+                var contactPosition = contacts.ReadVector3();
+                var contactNormal = contacts.ReadVector3();
                 /*float contactDistance = */
                 contacts.ReadFloat();
                 /*float contactImpulse = */
                 contacts.ReadFloat();
 
                 // If contact is below node center and pointing up, assume it's a ground contact
-                if (contactPosition.Y < (Node.Position.Y + 1.0f))
+                if (contactPosition.Y < Node.Position.Y + 1.0f)
                 {
-                    float level = contactNormal.Y;
+                    var level = contactNormal.Y;
                     if (level > 0.75)
                         onGround = true;
                 }

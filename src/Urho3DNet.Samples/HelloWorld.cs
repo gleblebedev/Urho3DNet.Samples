@@ -22,16 +22,15 @@
 
             // Set the mouse mode to use in the sample
             InitMouseMode(MouseMode.MmFree);
-
         }
 
-        void CreateText()
+        private void CreateText()
         {
             var cache = Context.ResourceCache;
 
-            
+
             // Construct new Text object
-            Text helloText = Context.CreateObject<Text>();
+            var helloText = Context.CreateObject<Text>();
 
             // Set String to display
             helloText.SetText("Hello World from Urho3D!");
@@ -48,16 +47,15 @@
             GetSubsystem<UI>().Root.AddChild(helloText);
         }
 
-        void SubscribeToEvents()
+        private void SubscribeToEvents()
         {
             // Subscribe HandleUpdate() function for processing update events
             SubscribeToEvent(E.Update, HandleUpdate);
         }
 
-        void HandleUpdate(VariantMap eventData)
+        private void HandleUpdate(VariantMap eventData)
         {
             // Do nothing for now, could be extended to eg. animate the display
         }
-
     }
 }

@@ -4,7 +4,7 @@ namespace Urho3DNet.Samples
     public class Ragdolls : Sample
     {
         /// Flag for drawing debug geometry.
-        bool drawDebug_;
+        private bool drawDebug_;
 
         public Ragdolls(Context context) : base(context)
         {
@@ -32,7 +32,7 @@ namespace Urho3DNet.Samples
             InitMouseMode(MouseMode.MmRelative);
         }
 
-        void CreateScene()
+        private void CreateScene()
         {
             var cache = GetSubsystem<ResourceCache>();
 
@@ -52,15 +52,15 @@ namespace Urho3DNet.Samples
             zone.SetBoundingBox(new BoundingBox(-1000.0f, 1000.0f));
             zone.AmbientColor = new Color(0.15f, 0.15f, 0.15f);
             zone.FogColor = new Color(0.5f, 0.5f, 0.7f);
-            zone.FogStart = (100.0f);
-            zone.FogEnd = (300.0f);
+            zone.FogStart = 100.0f;
+            zone.FogEnd = 300.0f;
 
             // Create a directional light to the world. Enable cascaded shadows on it
             var lightNode = Scene.CreateChild("DirectionalLight");
             lightNode.Direction = new Vector3(0.6f, -1.0f, 0.8f);
             var light = lightNode.CreateComponent<Light>();
             light.LightType = LightType.LightDirectional;
-            light.CastShadows = (true);
+            light.CastShadows = true;
             light.ShadowBias = new BiasParameters(0.00025f, 0.5f);
             // Set cascade splits at 10, 50 and 200 world units, fade shadows out at 80% of maximum shadow distance
             light.ShadowCascade = new CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f);
@@ -68,7 +68,7 @@ namespace Urho3DNet.Samples
             {
                 // Create a floor object, 500 x 500 world units. Adjust position so that the ground is at zero Y
                 var floorNode = Scene.CreateChild("Floor");
-                floorNode.Position = new Vector3(0.0f, -0.5f, 0.0f);
+                floorNode.Position = new Vector3(0.0f, -0.5f);
                 floorNode.SetScale(new Vector3(500.0f, 1.0f, 500.0f));
                 var floorObject = floorNode.CreateComponent<StaticModel>();
                 floorObject.SetModel(cache.GetResource<Model>("Models/Box.mdl"));
@@ -86,35 +86,33 @@ namespace Urho3DNet.Samples
             }
 
             // Create animated models
-            for (int z = -1; z <= 1; ++z)
+            for (var z = -1; z <= 1; ++z)
+            for (var x = -4; x <= 4; ++x)
             {
-                for (int x = -4; x <= 4; ++x)
-                {
-                    var modelNode = Scene.CreateChild("Jack");
-                    modelNode.Position = new Vector3(x * 5.0f, 0.0f, z * 5.0f);
-                    modelNode.Rotation = new Quaternion(0.0f, 180.0f, 0.0f);
-                    var modelObject = modelNode.CreateComponent<AnimatedModel>();
-                    modelObject.SetModel(cache.GetResource<Model>("Models/Jack.mdl"));
-                    modelObject.SetMaterial(cache.GetResource<Material>("Materials/Jack.xml"));
-                    modelObject.CastShadows = true;
-                    // Set the model to also update when invisible to avoid staying invisible when the model should come into
-                    // view, but does not as the bounding box is not updated
-                    modelObject.UpdateInvisible = true;
+                var modelNode = Scene.CreateChild("Jack");
+                modelNode.Position = new Vector3(x * 5.0f, 0.0f, z * 5.0f);
+                modelNode.Rotation = new Quaternion(0.0f, 180.0f, 0.0f);
+                var modelObject = modelNode.CreateComponent<AnimatedModel>();
+                modelObject.SetModel(cache.GetResource<Model>("Models/Jack.mdl"));
+                modelObject.SetMaterial(cache.GetResource<Material>("Materials/Jack.xml"));
+                modelObject.CastShadows = true;
+                // Set the model to also update when invisible to avoid staying invisible when the model should come into
+                // view, but does not as the bounding box is not updated
+                modelObject.UpdateInvisible = true;
 
-                    // Create a rigid body and a collision shape. These will act as a trigger for transforming the
-                    // model into a ragdoll when hit by a moving object
-                    var body = modelNode.CreateComponent<RigidBody>();
-                    // The Trigger mode makes the rigid body only detect collisions, but impart no forces on the
-                    // colliding objects
-                    body.IsTrigger = true;
-                    var shape = modelNode.CreateComponent<CollisionShape>();
-                    // Create the capsule shape with an offset so that it is correctly aligned with the model, which
-                    // has its origin at the feet
-                    shape.SetCapsule(0.7f, 2.0f, new Vector3(0.0f, 1.0f, 0.0f));
+                // Create a rigid body and a collision shape. These will act as a trigger for transforming the
+                // model into a ragdoll when hit by a moving object
+                var body = modelNode.CreateComponent<RigidBody>();
+                // The Trigger mode makes the rigid body only detect collisions, but impart no forces on the
+                // colliding objects
+                body.IsTrigger = true;
+                var shape = modelNode.CreateComponent<CollisionShape>();
+                // Create the capsule shape with an offset so that it is correctly aligned with the model, which
+                // has its origin at the feet
+                shape.SetCapsule(0.7f, 2.0f, new Vector3(0.0f, 1.0f));
 
-                    // Create a custom component that reacts to collisions and creates the ragdoll
-                    modelNode.CreateComponent<CreateRagdoll>();
-                }
+                // Create a custom component that reacts to collisions and creates the ragdoll
+                modelNode.CreateComponent<CreateRagdoll>();
             }
 
             // Create the camera. Limit far clip distance to match the fog. Note: now we actually create the camera node outside
@@ -127,7 +125,7 @@ namespace Urho3DNet.Samples
             CameraNode.Position = new Vector3(0.0f, 3.0f, -20.0f);
         }
 
-        void CreateInstructions()
+        private void CreateInstructions()
         {
             var cache = GetSubsystem<ResourceCache>();
             var ui = GetSubsystem<UI>();
@@ -135,9 +133,9 @@ namespace Urho3DNet.Samples
             // Construct new Text object, set string to display and font to use
             var instructionText = ui.Root.CreateChild<Text>();
             instructionText.SetText(
-                "Use WASD keys and mouse/touch to move\n"+
-                "LMB to spawn physics objects\n"+
-                "F5 to save scene, F7 to load\n"+
+                "Use WASD keys and mouse/touch to move\n" +
+                "LMB to spawn physics objects\n" +
+                "F5 to save scene, F7 to load\n" +
                 "Space to toggle physics debug geometry"
             );
             instructionText.SetFont(cache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
@@ -147,10 +145,10 @@ namespace Urho3DNet.Samples
             // Position the text relative to the screen center
             instructionText.HorizontalAlignment = HorizontalAlignment.HaCenter;
             instructionText.VerticalAlignment = VerticalAlignment.VaCenter;
-            instructionText.Position = new  IntVector2(0, ui.Root.Height / 4);
+            instructionText.Position = new IntVector2(0, ui.Root.Height / 4);
         }
 
-        void SetupViewport()
+        private void SetupViewport()
         {
             var renderer = GetSubsystem<Renderer>();
 
@@ -159,7 +157,7 @@ namespace Urho3DNet.Samples
             renderer.SetViewport(0, viewport);
         }
 
-        void MoveCamera(float timeStep)
+        private void MoveCamera(float timeStep)
         {
             // Do not move if the UI has a focused element (the console)
             if (GetSubsystem<UI>().GetFocusElement() != null)
@@ -173,7 +171,7 @@ namespace Urho3DNet.Samples
             const float MOUSE_SENSITIVITY = 0.1f;
 
             // Use this frame's mouse motion to adjust camera node yaw and pitch. Clamp the pitch between -90 and 90 degrees
-            IntVector2 mouseMove = input.MouseMove;
+            var mouseMove = input.MouseMove;
             yaw_ += MOUSE_SENSITIVITY * mouseMove.X;
             pitch_ += MOUSE_SENSITIVITY * mouseMove.Y;
             pitch_ = MathDefs.Clamp(pitch_, -90.0f, 90.0f);
@@ -212,7 +210,7 @@ namespace Urho3DNet.Samples
                 drawDebug_ = !drawDebug_;
         }
 
-        void SpawnObject()
+        private void SpawnObject()
         {
             var cache = GetSubsystem<ResourceCache>();
 
@@ -226,8 +224,8 @@ namespace Urho3DNet.Samples
             boxObject.CastShadows = true;
 
             var body = boxNode.CreateComponent<RigidBody>();
-            body.Mass = (1.0f);
-            body.RollingFriction = (0.15f);
+            body.Mass = 1.0f;
+            body.RollingFriction = 0.15f;
             var shape = boxNode.CreateComponent<CollisionShape>();
             shape.SetSphere(1.0f);
 
@@ -235,10 +233,10 @@ namespace Urho3DNet.Samples
 
             // Set initial velocity for the RigidBody based on camera forward vector. Add also a slight up component
             // to overcome gravity better
-            body.LinearVelocity = (CameraNode.Rotation * new Vector3(0.0f, 0.25f, 1.0f) * OBJECT_VELOCITY);
+            body.LinearVelocity = CameraNode.Rotation * new Vector3(0.0f, 0.25f, 1.0f) * OBJECT_VELOCITY;
         }
 
-        void SubscribeToEvents()
+        private void SubscribeToEvents()
         {
             // Subscribe HandleUpdate() function for processing update events
             SubscribeToEvent(E.Update, HandleUpdate);
@@ -248,21 +246,20 @@ namespace Urho3DNet.Samples
             SubscribeToEvent(E.PostRenderUpdate, HandlePostRenderUpdate);
         }
 
-        void HandleUpdate(VariantMap eventData)
+        private void HandleUpdate(VariantMap eventData)
         {
             // Take the frame time step, which is stored as a float
-            float timeStep = eventData[E.Update.TimeStep].Float;
+            var timeStep = eventData[E.Update.TimeStep].Float;
 
             // Move the camera, scale movement with time step
             MoveCamera(timeStep);
-    }
+        }
 
-        void HandlePostRenderUpdate(VariantMap eventData)
+        private void HandlePostRenderUpdate(VariantMap eventData)
         {
             // If draw debug mode is enabled, draw physics debug geometry. Use depth test to make the result easier to interpret
             if (drawDebug_)
                 Scene.GetComponent<PhysicsWorld>().DrawDebugGeometry(true);
         }
-
     }
 }

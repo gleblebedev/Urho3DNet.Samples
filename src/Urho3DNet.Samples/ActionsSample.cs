@@ -1,13 +1,13 @@
 ﻿namespace Urho3DNet.Samples
 {
     [Preserve(AllMembers = true)]
-    class ActionsSample: Sample
+    internal class ActionsSample : Sample
     {
         public ActionsSample(Context context) : base(context)
         {
         }
-        
-        void CreateScene()
+
+        private void CreateScene()
         {
             Scene = new Scene(Context);
 
@@ -21,6 +21,5 @@
             var camera = CameraNode.CreateComponent<Camera>();
             camera.FarClip = 100.0f;
         }
-
     }
 }

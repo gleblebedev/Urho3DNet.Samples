@@ -10,9 +10,12 @@ namespace Urho3DNet.Samples
 
         /// The controllable character component.
         private KinematicCharacter character_;
+
         private KinematicCharacterController kinematicCharacter_;
+
         /// First person camera flag.
         private bool firstPerson_ = true;
+
         private bool drawDebug_;
 
         public KinematicCharacterDemo(Context context) : base(context)
@@ -147,12 +150,12 @@ namespace Urho3DNet.Samples
         {
             var cache = GetSubsystem<ResourceCache>();
 
-            Node objectNode = Scene.CreateChild("Jack");
-            objectNode.Position = new Vector3(0.0f, 1.0f, 0.0f);
+            var objectNode = Scene.CreateChild("Jack");
+            objectNode.Position = new Vector3(0.0f, 1.0f);
 
             // spin node
-            Node adjustNode = objectNode.CreateChild("AdjNode");
-            adjustNode.Rotation = new Quaternion(180, new Vector3(0, 1, 0));
+            var adjustNode = objectNode.CreateChild("AdjNode");
+            adjustNode.Rotation = new Quaternion(180, new Vector3(0, 1));
 
             // Create the rendering component + animation controller
             var @object = adjustNode.CreateComponent<AnimatedModel>();
@@ -166,9 +169,9 @@ namespace Urho3DNet.Samples
 
             // Create rigidbody
             var body = objectNode.CreateComponent<RigidBody>();
-            body.CollisionLayer = (1);
-            body.IsKinematic = (true);
-            body.IsTrigger = (true);
+            body.CollisionLayer = 1;
+            body.IsKinematic = true;
+            body.IsTrigger = true;
 
             // Set zero angular factor so that physics doesn't turn the character on its own.
             // Instead we will control the character yaw manually
@@ -179,7 +182,7 @@ namespace Urho3DNet.Samples
 
             // Set a capsule shape for collision
             var shape = objectNode.CreateComponent<CollisionShape>();
-            shape.SetCapsule(0.7f, 1.8f, new Vector3(0.0f, 0.9f, 0.0f));
+            shape.SetCapsule(0.7f, 1.8f, new Vector3(0.0f, 0.9f));
 
             // Create the character logic component, which takes care of steering the rigidbody
             // Remember it so that we can set the controls. Use a ea::weak_ptr because the scene hierarchy already owns it
@@ -196,8 +199,8 @@ namespace Urho3DNet.Samples
             // Construct new Text object, set string to display and font to use
             var instructionText = ui.Root.CreateChild<Text>();
             instructionText.SetText(
-                "Use WASD keys and mouse/touch to move\n"+
-                "Space to jump, F to toggle 1st/3rd person\n"+
+                "Use WASD keys and mouse/touch to move\n" +
+                "Space to jump, F to toggle 1st/3rd person\n" +
                 "F5 to save scene, F7 to load"
             );
             instructionText.SetFont(cache.GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
@@ -229,7 +232,9 @@ namespace Urho3DNet.Samples
             if (character_ != null && character_.IsNotExpired)
             {
                 // Clear previous controls
-                character_.Controls.Set(KinematicCharacter.CTRL_FORWARD | KinematicCharacter.CTRL_BACK | KinematicCharacter.CTRL_LEFT | KinematicCharacter.CTRL_RIGHT | KinematicCharacter.CTRL_JUMP, false);
+                character_.Controls.Set(
+                    KinematicCharacter.CTRL_FORWARD | KinematicCharacter.CTRL_BACK | KinematicCharacter.CTRL_LEFT |
+                    KinematicCharacter.CTRL_RIGHT | KinematicCharacter.CTRL_JUMP, false);
 
                 // Update controls using touch utility class
                 if (touch_ != null)
@@ -246,6 +251,7 @@ namespace Urho3DNet.Samples
                         character_.Controls.Set(KinematicCharacter.CTRL_LEFT, input.GetKeyDown(Key.KeyA));
                         character_.Controls.Set(KinematicCharacter.CTRL_RIGHT, input.GetKeyDown(Key.KeyD));
                     }
+
                     character_.Controls.Set(KinematicCharacter.CTRL_JUMP, input.GetKeyDown(Key.KeySpace));
 
                     // Add character yaw & pitch from the mouse motion or touch input
@@ -253,24 +259,27 @@ namespace Urho3DNet.Samples
                     {
                         for (uint i = 0; i < input.NumTouches; ++i)
                         {
-                            TouchState state = input.GetTouch(i);
-                            if (state.TouchedElement == null)    // Touch on empty space
+                            var state = input.GetTouch(i);
+                            if (state.TouchedElement == null) // Touch on empty space
                             {
                                 var camera = CameraNode.GetComponent<Camera>();
                                 if (camera == null)
                                     return;
 
                                 var graphics = GetSubsystem<Graphics>();
-                                character_.Controls.Yaw += TOUCH_SENSITIVITY * camera.Fov / graphics.Height * state.Delta.X;
-                                character_.Controls.Pitch += TOUCH_SENSITIVITY * camera.Fov / graphics.Height * state.Delta.Y;
+                                character_.Controls.Yaw +=
+                                    TOUCH_SENSITIVITY * camera.Fov / graphics.Height * state.Delta.X;
+                                character_.Controls.Pitch +=
+                                    TOUCH_SENSITIVITY * camera.Fov / graphics.Height * state.Delta.Y;
                             }
                         }
                     }
                     else
                     {
-                        character_.Controls.Yaw += (float)input.MouseMoveX * KinematicCharacter.YAW_SENSITIVITY;
-                        character_.Controls.Pitch += (float)input.MouseMoveY * KinematicCharacter.YAW_SENSITIVITY;
+                        character_.Controls.Yaw += input.MouseMoveX * KinematicCharacter.YAW_SENSITIVITY;
+                        character_.Controls.Pitch += input.MouseMoveY * KinematicCharacter.YAW_SENSITIVITY;
                     }
+
                     // Limit pitch
                     character_.Controls.Pitch = MathDefs.Clamp(character_.Controls.Pitch, -80.0f, 80.0f);
                     // Set rotation already here so that it's updated every rendering frame instead of every physics frame
@@ -290,6 +299,7 @@ namespace Urho3DNet.Samples
                         //File saveFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/CharacterDemo.xml", FILE_WRITE);
                         //scene_.SaveXML(saveFile);
                     }
+
                     if (input.GetKeyPress(Key.KeyF7))
                     {
                         //File loadFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/CharacterDemo.xml", FILE_READ);
@@ -317,12 +327,12 @@ namespace Urho3DNet.Samples
 
             // Get camera lookat dir from character yaw + pitch
             var rot = characterNode.Rotation;
-            Quaternion dir = rot * new Quaternion(character_.Controls.Pitch, Vector3.Right);
+            var dir = rot * new Quaternion(character_.Controls.Pitch, Vector3.Right);
 
             // Turn head to camera pitch, but limit to avoid unnatural animation
             var headNode = characterNode.GetChild("Mutant:Head", true);
-            float limitPitch = MathDefs.Clamp(character_.Controls.Pitch, -45.0f, 45.0f);
-            Quaternion headDir = rot * new Quaternion(limitPitch, new Vector3(1.0f, 0.0f, 0.0f));
+            var limitPitch = MathDefs.Clamp(character_.Controls.Pitch, -45.0f, 45.0f);
+            var headDir = rot * new Quaternion(limitPitch, new Vector3(1.0f));
             // This could be expanded to look at an arbitrary target, now just look at a point in front
             // TODO
             // Vector3 headWorldTarget = headNode.WorldPosition + headDir * new Vector3(0.0f, 0.0f, -1.0f);
@@ -336,11 +346,11 @@ namespace Urho3DNet.Samples
             else
             {
                 // Third person camera: position behind the character
-                Vector3 aimPoint = characterNode.Position + rot * new Vector3(0.0f, 1.7f, 0.0f);
+                var aimPoint = characterNode.Position + rot * new Vector3(0.0f, 1.7f);
 
                 // Collide camera ray with static physics objects (layer bitmask 2) to ensure we see the character properly
-                Vector3 rayDir = dir * Vector3.Back;
-                float rayDistance = touch_ != null ? touch_.CameraDistance : Touch.CAMERA_INITIAL_DIST;
+                var rayDir = dir * Vector3.Back;
+                var rayDistance = touch_ != null ? touch_.CameraDistance : Touch.CAMERA_INITIAL_DIST;
                 var result = new PhysicsRaycastResult();
                 Scene.GetComponent<PhysicsWorld>().RaycastSingle(result, new Ray(aimPoint, rayDir), rayDistance, 2);
                 if (result.Body != null)
@@ -358,13 +368,10 @@ namespace Urho3DNet.Samples
             if (drawDebug_)
             {
                 Scene.GetComponent<PhysicsWorld>().DrawDebugGeometry(true);
-                DebugRenderer dbgRenderer = Scene.GetComponent<DebugRenderer>();
+                var dbgRenderer = Scene.GetComponent<DebugRenderer>();
 
-                Node objectNode = Scene.GetChild("Player");
-                if (objectNode != null)
-                {
-                    dbgRenderer.AddSphere(new Sphere(objectNode.WorldPosition, 0.1f), Color.Yellow);
-                }
+                var objectNode = Scene.GetChild("Player");
+                if (objectNode != null) dbgRenderer.AddSphere(new Sphere(objectNode.WorldPosition, 0.1f), Color.Yellow);
             }
         }
     }
