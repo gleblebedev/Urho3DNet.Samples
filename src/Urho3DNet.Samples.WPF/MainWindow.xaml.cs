@@ -9,6 +9,7 @@ namespace Urho3DNet.Samples
     {
         public MainWindow()
         {
+            System.Windows.MessageBox.Show("This sample is under construction.", "Warning");
             InitializeComponent();
             this.Loaded += Launch;
         }

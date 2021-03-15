@@ -38,7 +38,12 @@ namespace Urho3DNet.Samples
 
         private Vehicle2 Vehicle
         {
-            get => _vehicle;
+            get
+            {
+                if (_vehicle == null || _vehicle.Value.IsExpired)
+                    return null;
+                return _vehicle.Value;
+            }
             set => _vehicle.Value = value;
         }
 
@@ -240,6 +245,7 @@ namespace Urho3DNet.Samples
         {
             if (Vehicle == null) return;
             var vehicleNode = Vehicle.Node;
+            if (vehicleNode == null) return;
             // Physics update has completed. Position camera behind vehicle
             var dir = new Quaternion(vehicleNode.Rotation.YawAngle, Vector3.Up);
             dir = dir * new Quaternion(Vehicle.controls_.Yaw, Vector3.Up);

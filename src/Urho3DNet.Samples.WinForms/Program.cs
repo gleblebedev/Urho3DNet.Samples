@@ -6,7 +6,7 @@ namespace Urho3DNet.Samples.WinForms
     {
         static void Main(string[] args)
         {
-            
+            System.Windows.Forms.MessageBox.Show("This sample is under construction.", "Warning");
         }
     }
 }
