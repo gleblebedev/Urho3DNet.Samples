@@ -156,11 +156,14 @@ namespace Urho3DNet.Samples
 
         private void OnClickSample(VariantMap eventData)
         {
-            var sampleType = ((UIElement) eventData[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
-            if (sampleType.Hash == 0)
-                return;
+            if (runningSample_.Value == null)
+            {
+                var sampleType = ((UIElement) eventData[E.Released.Element].Ptr).Vars["SampleType"].StringHash;
+                if (sampleType.Hash == 0)
+                    return;
 
-            StartSample(sampleType);
+                StartSample(sampleType);
+            }
         }
 
         private void StartSample(StringHash sampleType)

@@ -1,12 +1,12 @@
-<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
+﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;xamarin.ios10;monoandroid90</TargetFrameworks>
     </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.243" />
-    <PackageReference Include="unofficial.Urho3DNet.Actions" Version="0.3.7.7" />
+    <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.261" />
+    <PackageReference Include="unofficial.Urho3DNet.Actions" Version="0.3.7.10" />
   </ItemGroup>
 
     <!-- Exclude Data folder and all it's content -->
@@ -25,12 +25,16 @@
         </Content>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'xamarin.ios10'">
+    <!-- This is currently broken at MSBuild.Sdk.Extras. iOS project to reference content directly.
+    <ItemGroup Condition="$(TargetFramework.StartsWith('xamarin.ios'))">
         <BundleResource Include="Data\**">
+            <Pack>true</Pack>
+            <PackagePath>Data/%(RecursiveDir)%(FileName)%(Extension)</PackagePath>
         </BundleResource>
     </ItemGroup>
+    -->
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'monoandroid90'">
+    <ItemGroup Condition="$(TargetFramework.StartsWith('monoandroid')) OR $(TargetFramework.StartsWith('xamarin.android'))">
         <AndroidAsset Include="Data\**">
         </AndroidAsset>
     </ItemGroup>

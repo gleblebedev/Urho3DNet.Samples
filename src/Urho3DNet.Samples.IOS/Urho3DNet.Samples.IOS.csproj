@@ -46,7 +46,7 @@
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>Apple Development: Gleb Lebedev (3LGDECZL33)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
@@ -73,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="unofficial.Urho3DNet">
-      <Version>0.3.7.243</Version>
+      <Version>0.3.7.261</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
   </ItemGroup>
@@ -130,6 +130,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\Urho3DNet.Samples\Data\**">
+      <Link>Data\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <Pack>true</Pack>
+      <PackagePath>Data\%(RecursiveDir)%(FileName)%(Extension)</PackagePath>
+    </BundleResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Urho3DNet.Samples\Urho3DNet.Samples.csproj">
