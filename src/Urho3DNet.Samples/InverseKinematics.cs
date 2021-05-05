@@ -24,7 +24,7 @@ using System;
 
 namespace Urho3DNet.Samples
 {
-    [ObjectFactory]
+    //[ObjectFactory]
     public class InverseKinematics : Sample
     {
         private Node floorNode_;

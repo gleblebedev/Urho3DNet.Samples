@@ -1,4 +1,8 @@
-﻿namespace Urho3DNet.Samples
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+
+namespace Urho3DNet.Samples
 {
     [ObjectFactory]
     public class CreateRagdoll : Component
@@ -66,17 +70,17 @@
                 CreateRagdollConstraint("Bip01_R_Thigh", "Bip01_Pelvis", ConstraintType.ConstraintConetwist,
                     Vector3.Back, Vector3.Forward,
                     new Vector2(45.0f, 45.0f), Vector2.ZERO);
-                CreateRagdollConstraint("Bip01_L_Calf", "Bip01_L_Thigh", ConstraintType.ConstraintHinge, Vector3.Back,
-                    Vector3.Back,
+                CreateRagdollConstraint("Bip01_L_Calf", "Bip01_L_Thigh", ConstraintType.ConstraintHinge,
+                    Vector3.Back, Vector3.Back,
                     new Vector2(90.0f, 0.0f), Vector2.ZERO);
-                CreateRagdollConstraint("Bip01_R_Calf", "Bip01_R_Thigh", ConstraintType.ConstraintHinge, Vector3.Back,
-                    Vector3.Back,
+                CreateRagdollConstraint("Bip01_R_Calf", "Bip01_R_Thigh", ConstraintType.ConstraintHinge,
+                    Vector3.Back, Vector3.Back,
                     new Vector2(90.0f, 0.0f), Vector2.ZERO);
-                CreateRagdollConstraint("Bip01_Spine1", "Bip01_Pelvis", ConstraintType.ConstraintHinge, Vector3.Forward,
-                    Vector3.Forward,
+                CreateRagdollConstraint("Bip01_Spine1", "Bip01_Pelvis", ConstraintType.ConstraintHinge,
+                    Vector3.Forward, Vector3.Forward,
                     new Vector2(45.0f, 0.0f), new Vector2(-10.0f, 0.0f));
-                CreateRagdollConstraint("Bip01_Head", "Bip01_Spine1", ConstraintType.ConstraintConetwist, Vector3.Left,
-                    Vector3.Left,
+                CreateRagdollConstraint("Bip01_Head", "Bip01_Spine1", ConstraintType.ConstraintConetwist,
+                    Vector3.Left, Vector3.Left,
                     new Vector2(0.0f, 30.0f), Vector2.ZERO);
                 CreateRagdollConstraint("Bip01_L_UpperArm", "Bip01_Spine1", ConstraintType.ConstraintConetwist,
                     Vector3.Down, Vector3.Up,
@@ -97,9 +101,70 @@
                 for (uint i = 0; i < skeleton.NumBones; ++i)
                     skeleton.GetBone(i).Animated = false;
 
+                for (uint i = 0; i < skeleton.NumBones; ++i)
+                {
+                    var bone = skeleton.GetBone(i);
+                    var boneNode = Node.GetChild(bone.NameHash, true);
+                    var constraint = boneNode.GetComponent<Constraint>();
+                    if (constraint != null)
+                    {
+                        var axis = (constraint.ConstraintType == ConstraintType.ConstraintHinge)
+                            ? Vector3.Forward
+                            : Vector3.Right;
+                        
+                        var a1 = constraint.Rotation * axis;
+                        var otherBone = skeleton.Bones.FirstOrDefault(_ => _.Name == constraint.OtherBody.Node.Name);
+                        if (otherBone != null)
+                        {
+                            var bindingPoseMatrix = bone.OffsetMatrix;
+                            var poseMatrix = bindingPoseMatrix.Inverse();
+                            var worldAxis = poseMatrix.Rotation * a1;
+                            var otherAxis = otherBone.OffsetMatrix.Rotation* worldAxis;
+
+                            var pos = bindingPoseMatrix * (otherBone.OffsetMatrix.Inverse() * constraint.OtherPosition);
+                            var otherPos = otherBone.OffsetMatrix * (bindingPoseMatrix.Inverse() * constraint.Position);
+                            Debug.WriteLine($"{bone.Name} to {otherBone.Name} {constraint.ConstraintType}:\n\t   my axis {SA(a1)},\n\tother axis {SA(otherAxis)}\n\tworld axis {SA(worldAxis)}");
+                            Debug.WriteLine($"\t   my position {constraint.Position}, predicted {pos}, D = {(pos- constraint.Position).Length}");
+                            Debug.WriteLine($"\tother position {constraint.OtherPosition}, predicted {otherPos}, D = {(otherPos - constraint.OtherPosition).Length}");
+
+                            var r = constraint.Rotation;
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"{bone.Name} -> {a1}");
+                        }
+
+                    }
+                }
+                
                 // Finally remove self from the scene node. Note that this must be the last operation performed in the function
                 Remove();
             }
+        }
+
+        private string SA(Vector3 v)
+        {
+            var maxT = 0.0f;
+            string name = "?";
+            foreach (var t in new []
+            {
+                Tuple.Create(nameof(Vector3.Forward), Vector3.Forward),
+                Tuple.Create(nameof(Vector3.Back), Vector3.Back),
+                Tuple.Create(nameof(Vector3.Right), Vector3.Right),
+                Tuple.Create(nameof(Vector3.Left), Vector3.Left),
+                Tuple.Create(nameof(Vector3.Up), Vector3.Up),
+                Tuple.Create(nameof(Vector3.Down), Vector3.Down),
+            })
+            {
+                var dotProduct = v.DotProduct(t.Item2);
+                if (dotProduct > maxT)
+                {
+                    maxT = dotProduct;
+                    name = t.Item1;
+                }
+            }
+
+            return name;
         }
 
         private void CreateRagdollBone(string boneName, ShapeType type, Vector3 size, Vector3 position,

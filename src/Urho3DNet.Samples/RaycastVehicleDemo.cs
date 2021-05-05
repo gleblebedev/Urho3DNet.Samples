@@ -22,7 +22,7 @@
 
 namespace Urho3DNet.Samples
 {
-    [ObjectFactory]
+    //[ObjectFactory]
     public class RaycastVehicleDemo : Sample
     {
         public const float YAW_SENSITIVITY = 0.1f;

@@ -1,6 +1,6 @@
 namespace Urho3DNet.Samples
 {
-    [ObjectFactory]
+    //[ObjectFactory]
     public class Ragdolls : Sample
     {
         /// Flag for drawing debug geometry.
@@ -193,17 +193,22 @@ namespace Urho3DNet.Samples
             if (input.GetMouseButtonPress(MouseButton.MousebLeft))
                 SpawnObject();
 
-            //    // Check for loading / saving the scene
-            //    if (input.GetKeyPress(KEY_F5))
-            //    {
-            //        File saveFile(context_, GetSubsystem<FileSystem>().GetProgramDir() + "Data/Scenes/Ragdolls.xml", FILE_WRITE);
-            //        Scene.SaveXML(saveFile);
-            //    }
-            //    if (input.GetKeyPress(KEY_F7))
-            //    {
-            //        File loadFile(context_, GetSubsystem<FileSystem>().GetProgramDir() + "Data/Scenes/Ragdolls.xml", FILE_READ);
-            //        Scene.LoadXML(loadFile);
-            //    }
+            // Check for loading / saving the scene
+            if (input.GetKeyPress(Key.KeyF5))
+            {
+                File saveFile = new File(Context, GetSubsystem<FileSystem>().ProgramDir +"Data/Scenes/Ragdolls.xml", FileMode.FileWrite);
+                Scene.SaveXML(saveFile);
+            }
+            //if (input.GetKeyPress(Key.KeyF7))
+            //{
+            //    File loadFile(context_, GetSubsystem<FileSystem>().GetProgramDir() +"Data/Scenes/Ragdolls.xml", FILE_READ);
+            //    Scene.LoadXML(loadFile);
+            //}
+
+            if (input.GetKeyPress(Key.KeyF4))
+            {
+                Scene.TimeScale = (Scene.TimeScale == 1)?0:1;
+            }
 
             // Toggle physics debug geometry with space
             if (input.GetKeyPress(Key.KeySpace))
@@ -259,7 +264,7 @@ namespace Urho3DNet.Samples
         {
             // If draw debug mode is enabled, draw physics debug geometry. Use depth test to make the result easier to interpret
             if (drawDebug_)
-                Scene.GetComponent<PhysicsWorld>().DrawDebugGeometry(true);
+                Scene.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
         }
     }
 }

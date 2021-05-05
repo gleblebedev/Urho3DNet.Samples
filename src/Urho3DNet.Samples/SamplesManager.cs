@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Urho3DNet.Samples
 {
@@ -39,6 +40,7 @@ namespace Urho3DNet.Samples
             SubscribeToEvent(E.Released, OnClickSample);
             SubscribeToEvent(E.KeyUp, OnKeyPress);
             SubscribeToEvent(E.BeginFrame, OnFrameStart);
+            SubscribeToEvent(E.LogMessage, OnLogMessage);
 
             // Register an object factory for our custom Rotator component so that we can create them to scene nodes
             //Context.RegisterFactory<Rotator>();
@@ -95,8 +97,29 @@ namespace Urho3DNet.Samples
             RegisterSample<Ragdolls>();
             RegisterSample<InverseKinematics>();
             RegisterSample<RaycastVehicleDemo>();
+            RegisterSample<DynamicGeometry>();
+            RegisterSample<NavigationDemo>();
 
             base.Start();
+        }
+
+        private void OnLogMessage(VariantMap obj)
+        {
+            var level = (LogLevel)obj[E.LogMessage.Level].Int;
+            var message = obj[E.LogMessage.Message].String;
+            switch (level)
+            {
+                case LogLevel.LogError:
+#if DEBUG
+                if (!message.Contains("Failed to register"))
+                    throw new ApplicationException(message);
+#endif
+                    Trace.WriteLine(message);
+                    break;
+                default:
+                    Trace.WriteLine(message);
+                    break;
+            }
         }
 
         public override void Stop()

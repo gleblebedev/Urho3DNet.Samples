@@ -4,14 +4,19 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Urho3DNet.Samples</RootNamespace>
+    <Configurations>$(Configurations);Editor</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Platform)'=='AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Editor'">
+      <RunCommand>C:\Temp\rbfxEditor\Editor.exe</RunCommand>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.261" />
+    <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.292" />
   </ItemGroup>
 
   <ItemGroup>

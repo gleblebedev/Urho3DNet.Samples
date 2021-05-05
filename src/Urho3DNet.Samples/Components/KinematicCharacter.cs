@@ -2,7 +2,7 @@
 
 namespace Urho3DNet.Samples
 {
-    [ObjectFactory]
+    //[ObjectFactory]
     public class KinematicCharacter : LogicComponent
     {
         public const uint CTRL_FORWARD = 1;

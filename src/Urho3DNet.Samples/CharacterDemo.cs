@@ -2,7 +2,7 @@ using System;
 
 namespace Urho3DNet.Samples
 {
-    [ObjectFactory]
+    //[ObjectFactory]
     public class CharacterDemo : Sample
     {
         /// Touch utility object.
