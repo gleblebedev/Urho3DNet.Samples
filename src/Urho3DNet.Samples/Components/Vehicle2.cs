@@ -258,7 +258,7 @@ namespace Urho3DNet.Samples
         }
 
         /// Applying attributes
-        private void ApplyAttributes()
+        public override void ApplyAttributes()
         {
             var vehicle = Node.GetOrCreateComponent<RaycastVehicle>();
             if (emittersCreated)

@@ -177,5 +177,28 @@
             var mouseLocked = eventData[E.MouseModeChanged.MouseLocked].Bool;
             Context.Input.SetMouseVisible(!mouseLocked);
         }
+
+        protected void CloseSample()
+        {
+            using (VariantMap args = new VariantMap())
+            {
+                args[E.KeyDown.Key] = (int)Key.KeyEscape;
+                args[E.KeyDown.Scancode] = (int)Scancode.ScancodeEscape;
+                args[E.KeyDown.Buttons] = 0;
+                args[E.KeyDown.Qualifiers] = 0;
+                args[E.KeyDown.Repeat] = false;
+                SendEvent(E.KeyDown, args);
+                
+            }
+            using (VariantMap args = new VariantMap())
+            {
+                args[E.KeyUp.Key] = (int)Key.KeyEscape;
+                args[E.KeyUp.Scancode] = (int)Scancode.ScancodeEscape;
+                args[E.KeyUp.Buttons] = 0;
+                args[E.KeyUp.Qualifiers] = 0;
+                SendEvent(E.KeyUp, args);
+            }
+        }
+
     }
 }

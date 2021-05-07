@@ -90,6 +90,7 @@ namespace Urho3DNet.Samples
 
             RegisterSample<HelloWorld>();
             RegisterSample<AnimatingScene>();
+            RegisterSample<ConsoleInput>();
             RegisterSample<ActionsSample>();
             Context.RegisterFactory<KinematicCharacter>();
             RegisterSample<KinematicCharacterDemo>();
