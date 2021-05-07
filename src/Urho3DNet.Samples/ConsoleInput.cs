@@ -62,8 +62,9 @@ namespace Urho3DNet.Samples
 
             // Show the console by default, make it large. Console will show the text edit field when there is at least one
             // subscriber for the console command event
-            var console = GetSubsystem<Console>();
-            console.CommandInterpreter = nameof(ConsoleInput);
+            var console = Console;
+            //TODO: Exception thrown at 0x00007FFD71713B19 in Urho3DNet.Samples.Core.exe: Microsoft C++ exception: Swig::DirectorPureVirtualException at memory location 0x000000F33CB7D580.
+            //console.CommandInterpreter = nameof(ConsoleInput);
             console.IsVisible = (true);
 
             // Show OS mouse cursor
@@ -99,10 +100,17 @@ namespace Urho3DNet.Samples
     void HandleEscKeyDown(StringHash eventType, VariantMap eventData)
     {
         // Unlike the other samples, exiting the engine when ESC is pressed instead of just closing the console
-        if (eventData[E.KeyDown.Key].Int == (int)Key.KeyEscape)
+        if (eventData[E.KeyDown.Key].Int == (int) Key.KeyEscape)
         {
-            GetSubsystem<Console>().IsVisible = (false);
-            CloseSample();
+            if (Console.IsVisible)
+            {
+                Console.IsVisible = (false);
+            }
+            else
+            {
+                //TODO: fix stack overflow
+                //CloseSample();
+            }
         }
     }
 

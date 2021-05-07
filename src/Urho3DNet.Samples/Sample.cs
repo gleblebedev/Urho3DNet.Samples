@@ -26,8 +26,14 @@
         /// Camera scene node.
         private readonly SharedPtr<Viewport> viewport_ = new SharedPtr<Viewport>(null);
 
+        private readonly SharedPtr<Console> console_ = new SharedPtr<Console>(null);
+
+        private readonly SharedPtr<DebugHud> debugHud_ = new SharedPtr<DebugHud>(null);
+
         private Sprite logoSprite_;
 
+
+        public Console Console => console_.Value;
 
         public Sample(Context context) : base(context)
         {
@@ -59,6 +65,8 @@
         {
             CreateLogo();
 
+            CreateConsoleAndDebugHud();
+
             // Subscribe key down event
             SubscribeToEvent(E.KeyDown, HandleKeyDown);
             // Subscribe key up event
@@ -67,10 +75,21 @@
             SubscribeToEvent(E.SceneUpdate, HandleSceneUpdate);
         }
 
+        protected void CreateConsoleAndDebugHud()
+        {
+            // Create console
+            console_.Value = Context.GetSubsystem<Engine>().CreateConsole();
+
+            // Create debug HUD.
+            debugHud_.Value = Context.GetSubsystem<Engine>().CreateDebugHud();
+        }
+
         public virtual void Stop()
         {
             cameraNode_.Dispose();
             scene_.Dispose();
+            console_.Dispose();
+            debugHud_.Dispose();
         }
 
         protected void CreateLogo()
