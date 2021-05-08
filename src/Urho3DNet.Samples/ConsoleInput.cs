@@ -22,6 +22,11 @@ namespace Urho3DNet.Samples
         {
         }
 
+        public override string GetTypeName()
+        {
+            return nameof(ConsoleInput);
+        }
+
         // Hunger level descriptions
        string[] hungerLevels = new [] {
     "bursting",
@@ -64,7 +69,7 @@ namespace Urho3DNet.Samples
             // subscriber for the console command event
             var console = Console;
             //TODO: Exception thrown at 0x00007FFD71713B19 in Urho3DNet.Samples.Core.exe: Microsoft C++ exception: Swig::DirectorPureVirtualException at memory location 0x000000F33CB7D580.
-            //console.CommandInterpreter = nameof(ConsoleInput);
+            console.CommandInterpreter = nameof(ConsoleInput);
             console.IsVisible = (true);
 
             // Show OS mouse cursor
