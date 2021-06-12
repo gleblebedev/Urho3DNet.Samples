@@ -88,8 +88,10 @@ namespace Urho3DNet.Samples
             logoSprite.Opacity = 0.9f;
             logoSprite.Priority = -100;
 
-            RegisterSample<HelloWorld>();
-            RegisterSample<AnimatingScene>();
+            RegisterSample<HelloWorld>(); //01
+            RegisterSample<AnimatingScene>(); //05
+            RegisterSample<NavigationDemo>(); //15
+            RegisterSample<SceneReplication>(); //17
             RegisterSample<ConsoleInput>();
             RegisterSample<ActionsSample>();
             Context.RegisterFactory<KinematicCharacter>();
@@ -99,7 +101,8 @@ namespace Urho3DNet.Samples
             RegisterSample<InverseKinematics>();
             RegisterSample<RaycastVehicleDemo>();
             RegisterSample<DynamicGeometry>();
-            RegisterSample<NavigationDemo>();
+            RegisterSample<NATPunchtrough>(); //52
+            RegisterSample<LANDiscovery>(); //53
 
             base.Start();
         }

@@ -196,6 +196,11 @@
             var mouseLocked = eventData[E.MouseModeChanged.MouseLocked].Bool;
             Context.Input.SetMouseVisible(!mouseLocked);
         }
+        protected void SetLogoVisible(bool enable)
+        {
+            if (logoSprite_ != null)
+                logoSprite_.IsVisible = (enable);
+        }
 
         protected void CloseSample()
         {

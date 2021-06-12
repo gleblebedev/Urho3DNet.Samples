@@ -7,8 +7,8 @@
 
       <ItemGroup>
         <PackageReference Include="System.Memory" Version="4.5.4" />
-        <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.292" />
-        <PackageReference Include="unofficial.Urho3DNet.Actions" Version="0.3.7.10" />
+        <PackageReference Include="unofficial.Urho3DNet" Version="0.3.7.302" />
+        <PackageReference Include="unofficial.Urho3DNet.Actions" Version="0.3.7.18" />
       </ItemGroup>
 
     <!-- Exclude Data folder and all it's content -->
