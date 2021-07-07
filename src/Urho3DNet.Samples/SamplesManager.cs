@@ -199,7 +199,7 @@ namespace Urho3DNet.Samples
             ui.Root.RemoveAllChildren();
             ui.SetFocusElement(null);
 
-            runningSample_.Value = new SharedPtr<Sample>(Context.CreateObject(sampleType) as Sample);
+            runningSample_.Value = Context.CreateObject(sampleType) as Sample;
             runningSample_.Value?.Start();
         }
 

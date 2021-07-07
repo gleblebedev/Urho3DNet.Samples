@@ -5,6 +5,8 @@ namespace Urho3DNet.Samples
     [Preserve(AllMembers = true)]
     public class SceneReplication : Sample
     {
+        private readonly bool autostartServer_;
+
         // Control bits we define
         private const uint CTRL_FORWARD = 1;
         private const uint CTRL_BACK = 2;
@@ -36,9 +38,13 @@ namespace Urho3DNet.Samples
         /// Mapping from client connections to controllable objects.
         private readonly Dictionary<Connection, Node> serverObjects_ = new Dictionary<Connection, Node>();
 
-
-        public SceneReplication(Context context) : base(context)
+        public SceneReplication(Context context) : this(context, false)
         {
+        }
+
+        public SceneReplication(Context context, bool autostartServer) : base(context)
+        {
+            this.autostartServer_ = autostartServer;
         }
 
         public override void Start()
@@ -60,6 +66,11 @@ namespace Urho3DNet.Samples
 
             // Set the mouse mode to use in the sample
             InitMouseMode(MouseMode.MmRelative);
+
+            if (autostartServer_)
+            {
+                StartServer();
+            }
         }
 
         private void CreateScene()
@@ -122,6 +133,12 @@ namespace Urho3DNet.Samples
 
         private void CreateUI()
         {
+            var graphics = GetSubsystem<Graphics>();
+            if (graphics == null)
+            {
+                return;
+            }
+
             var cache = GetSubsystem<ResourceCache>();
             var ui = GetSubsystem<UI>();
             var root = ui.Root;
@@ -135,7 +152,6 @@ namespace Urho3DNet.Samples
             cursor.SetStyleAuto(uiStyle);
             ui.Cursor = cursor;
             // Set starting position of the cursor at the rendering window center
-            var graphics = GetSubsystem<Graphics>();
             cursor.Position = new IntVector2(graphics.Width / 2, graphics.Height / 2);
 
             // Construct the instructions text element
@@ -183,6 +199,9 @@ namespace Urho3DNet.Samples
         private void SetupViewport()
         {
             var renderer = GetSubsystem<Renderer>();
+            if (renderer == null)
+                return;
+
 
             // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
             var viewport = new Viewport(Context, Scene, CameraNode.GetComponent<Camera>());
@@ -194,15 +213,19 @@ namespace Urho3DNet.Samples
             // Subscribe to fixed timestep physics updates for setting or applying controls
             SubscribeToEvent(E.PhysicsPreStep, HandlePhysicsPreStep);
 
-            // Subscribe HandlePostUpdate() method for processing update events. Subscribe to PostUpdate instead
-            // of the usual Update so that physics simulation has already proceeded for the frame, and can
-            // accurately follow the object with the camera
-            SubscribeToEvent(E.PostUpdate, HandlePostUpdate);
 
-            // Subscribe to button actions
-            connectButton_.SubscribeToEvent(E.Released, HandleConnect);
-            disconnectButton_.SubscribeToEvent(E.Released, HandleDisconnect);
-            startServerButton_.SubscribeToEvent(E.Released, HandleStartServer);
+            if (Context.Renderer != null)
+            {
+                // Subscribe HandlePostUpdate() method for processing update events. Subscribe to PostUpdate instead
+                // of the usual Update so that physics simulation has already proceeded for the frame, and can
+                // accurately follow the object with the camera
+                SubscribeToEvent(E.PostUpdate, HandlePostUpdate);
+
+                // Subscribe to button actions
+                connectButton_.SubscribeToEvent(E.Released, HandleConnect);
+                disconnectButton_.SubscribeToEvent(E.Released, HandleDisconnect);
+                startServerButton_.SubscribeToEvent(E.Released, HandleStartServer);
+            }
 
             // Subscribe to network events
             SubscribeToEvent(E.ServerConnected, HandleConnectionStatus);
@@ -240,10 +263,13 @@ namespace Urho3DNet.Samples
             var serverRunning = network.IsServerRunning;
 
             // Show and hide buttons so that eg. Connect and Disconnect are never shown at the same time
-            connectButton_.IsVisible = serverConnection == null && !serverRunning;
-            disconnectButton_.IsVisible = serverConnection != null || serverRunning;
-            startServerButton_.IsVisible = serverConnection == null && !serverRunning;
-            textEdit_.IsVisible = serverConnection == null && !serverRunning;
+            if (connectButton_ != null)
+            {
+                connectButton_.IsVisible = serverConnection == null && !serverRunning;
+                disconnectButton_.IsVisible = serverConnection != null || serverRunning;
+                startServerButton_.IsVisible = serverConnection == null && !serverRunning;
+                textEdit_.IsVisible = serverConnection == null && !serverRunning;
+            }
         }
 
         private Node CreateControllableObject()
@@ -366,7 +392,8 @@ namespace Urho3DNet.Samples
                 controls.Yaw = yaw_;
 
                 // Only apply WASD controls if there is no focused UI element
-                if (ui.GetFocusElement() != null)
+                var focusElement = ui.GetFocusElement();
+                if (focusElement == null)
                 {
                     controls.Set(CTRL_FORWARD, input.GetKeyDown(Key.KeyW));
                     controls.Set(CTRL_BACK, input.GetKeyDown(Key.KeyS));
@@ -453,6 +480,11 @@ namespace Urho3DNet.Samples
         }
 
         private void HandleStartServer(StringHash eventType, VariantMap eventData)
+        {
+            StartServer();
+        }
+
+        private void StartServer()
         {
             var network = GetSubsystem<Network>();
             network.StartServer(SERVER_PORT);
