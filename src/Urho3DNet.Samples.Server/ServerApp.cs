@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 
 namespace Urho3DNet.Samples.Server
 {
@@ -12,7 +13,10 @@ namespace Urho3DNet.Samples.Server
         public override void Setup()
         {
             EngineParameters[Urho3D.EpHeadless] = true;
+            EngineParameters[Urho3D.EpFrameLimiter] = true;
+            EngineParameters[Urho3D.EpRefreshRate] = 60;
             EngineParameters[Urho3D.EpWindowTitle] = "Server";
+            EngineParameters[Urho3D.EpResourcePrefixPaths] = Path.GetDirectoryName(typeof(Program).Assembly.Location);
             base.Setup();
         }
         public override void Start()
