@@ -82,3 +82,22 @@ Use the following command to create an Azure Container Instance from an Image on
 ```bash
 az container create -g urho3dnet-server-rg --name urho3dnet-server --image urho3dnetservercontainers.azurecr.io/urho3dnet-server-image:latest --cpu 1 --memory 1 --dns-name-label urho3dnet-server --port 2345 --protocol UDP
 ```
+
+# Updaing container
+
+Start with building a fresh image:
+```bash
+docker build -t "urho3dnet-server-image" -f Dockerfile .
+```
+
+Tag image with container registry name:
+```bash
+docker image tag urho3dnet-server-image urho3dnetservercontainers.azurecr.io/urho3dnet-server-image:latest
+```
+
+Push the image to Azure Container Registry using the following command
+```bash
+docker push urho3dnetservercontainers.azurecr.io/urho3dnet-server-image:latest
+```
+
+And now you can restart container. It will fetch fresh image during restart.

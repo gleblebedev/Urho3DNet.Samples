@@ -360,11 +360,13 @@ namespace Urho3DNet.Samples
             {
                 var packetsIn = 0;
                 var packetsOut = 0;
-                var connections = GetSubsystem<Network>().ClientConnections;
-                foreach (var connection in connections)
+                using (var connections = GetSubsystem<Network>().ClientConnections)
                 {
-                    packetsIn += connection.PacketsInPerSec;
-                    packetsOut += connection.PacketsOutPerSec;
+                    foreach (var connection in connections)
+                    {
+                        packetsIn += connection.PacketsInPerSec;
+                        packetsOut += connection.PacketsOutPerSec;
+                    }
                 }
 
                 packetsIn_.SetText("Packets  in: " + packetsIn);
@@ -409,36 +411,37 @@ namespace Urho3DNet.Samples
             // Server: apply controls to client objects
             else if (network.IsServerRunning)
             {
-                var connections = network.ClientConnections;
-
-                for (var i = 0; i < connections.Count; ++i)
+                using (var connections = network.ClientConnections)
                 {
-                    var connection = connections[i];
-                    // Get the object this connection is controlling
-                    var ballNode = serverObjects_[connection];
-                    if (ballNode == null)
-                        continue;
+                    for (var i = 0; i < connections.Count; ++i)
+                    {
+                        var connection = connections[i];
+                        // Get the object this connection is controlling
+                        var ballNode = serverObjects_[connection];
+                        if (ballNode == null)
+                            continue;
 
-                    var body = ballNode.GetComponent<RigidBody>();
+                        var body = ballNode.GetComponent<RigidBody>();
 
-                    // Get the last controls sent by the client
-                    var controls = connection.Controls;
-                    // Torque is relative to the forward vector
-                    var rotation = new Quaternion(0.0f, controls.Yaw, 0.0f);
+                        // Get the last controls sent by the client
+                        var controls = connection.Controls;
+                        // Torque is relative to the forward vector
+                        var rotation = new Quaternion(0.0f, controls.Yaw, 0.0f);
 
-                    const float MOVE_TORQUE = 3.0f;
+                        const float MOVE_TORQUE = 3.0f;
 
-                    // Movement torque is applied before each simulation step, which happen at 60 FPS. This makes the simulation
-                    // independent from rendering framerate. We could also apply forces (which would enable in-air control),
-                    // but want to emphasize that it's a ball which should only control its motion by rolling along the ground
-                    if ((controls.Buttons & CTRL_FORWARD) != 0)
-                        body.ApplyTorque(rotation * Vector3.Right * MOVE_TORQUE);
-                    if ((controls.Buttons & CTRL_BACK) != 0)
-                        body.ApplyTorque(rotation * Vector3.Left * MOVE_TORQUE);
-                    if ((controls.Buttons & CTRL_LEFT) != 0)
-                        body.ApplyTorque(rotation * Vector3.Forward * MOVE_TORQUE);
-                    if ((controls.Buttons & CTRL_RIGHT) != 0)
-                        body.ApplyTorque(rotation * Vector3.Back * MOVE_TORQUE);
+                        // Movement torque is applied before each simulation step, which happen at 60 FPS. This makes the simulation
+                        // independent from rendering framerate. We could also apply forces (which would enable in-air control),
+                        // but want to emphasize that it's a ball which should only control its motion by rolling along the ground
+                        if ((controls.Buttons & CTRL_FORWARD) != 0)
+                            body.ApplyTorque(rotation * Vector3.Right * MOVE_TORQUE);
+                        if ((controls.Buttons & CTRL_BACK) != 0)
+                            body.ApplyTorque(rotation * Vector3.Left * MOVE_TORQUE);
+                        if ((controls.Buttons & CTRL_LEFT) != 0)
+                            body.ApplyTorque(rotation * Vector3.Forward * MOVE_TORQUE);
+                        if ((controls.Buttons & CTRL_RIGHT) != 0)
+                            body.ApplyTorque(rotation * Vector3.Back * MOVE_TORQUE);
+                    }
                 }
             }
         }
