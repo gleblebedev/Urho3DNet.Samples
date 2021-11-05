@@ -180,15 +180,14 @@ namespace Urho3DNet.Samples
             // Set the rigidbody to signal collision also when in rest, so that we get ground collisions properly
             body.CollisionEventMode = CollisionEventMode.CollisionAlways;
 
-            // Set a capsule shape for collision
-            var shape = objectNode.CreateComponent<CollisionShape>();
-            shape.SetCapsule(0.7f, 1.8f, new Vector3(0.0f, 0.9f));
-
             // Create the character logic component, which takes care of steering the rigidbody
             // Remember it so that we can set the controls. Use a ea::weak_ptr because the scene hierarchy already owns it
             // and keeps it alive as long as it's not removed from the hierarchy
             character_ = objectNode.CreateComponent<KinematicCharacter>();
             kinematicCharacter_ = objectNode.CreateComponent<KinematicCharacterController>();
+            kinematicCharacter_.SetDiameter(0.7f);
+            kinematicCharacter_.SetHeight(1.8f);
+            kinematicCharacter_.SetOffset(new Vector3(0.0f, 0.9f, 0.0f));
         }
 
         private void CreateInstructions()

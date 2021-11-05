@@ -35,7 +35,6 @@ namespace Urho3DNet.Samples
         private bool isJumping_;
         private bool jumpStarted_;
 
-        private CollisionShape collisionShape_;
         private AnimationController animController_;
         private KinematicCharacterController kinematicController_;
 
@@ -49,7 +48,6 @@ namespace Urho3DNet.Samples
 
         public override void DelayedStart()
         {
-            collisionShape_ = Node.GetComponent<CollisionShape>(true);
             animController_ = Node.GetComponent<AnimationController>(true);
             kinematicController_ = Node.GetComponent<KinematicCharacterController>(true);
         }
