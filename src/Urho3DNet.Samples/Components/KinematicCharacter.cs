@@ -94,7 +94,7 @@ namespace Urho3DNet.Samples
                 // In-air direction control is limited
                 curMoveDir_ = curMoveDir_.Lerp(velocity, 0.03f);
 
-            kinematicController_.SetWalkDirection(curMoveDir_ * (softGrounded ? MOVE_FORCE : INAIR_MOVE_FORCE));
+            kinematicController_.SetWalkIncrement(curMoveDir_ * (softGrounded ? MOVE_FORCE : INAIR_MOVE_FORCE));
 
             if (softGrounded)
             {
@@ -156,29 +156,29 @@ namespace Urho3DNet.Samples
 
         public override void FixedPostUpdate(float timeStep)
         {
-            if (movingData_[0] == movingData_[1])
-            {
-                var delta = movingData_[0].transform_ * movingData_[1].transform_.Inverse();
+            //if (movingData_[0] == movingData_[1])
+            //{
+            //    var delta = movingData_[0].transform_ * movingData_[1].transform_.Inverse();
 
-                // add delta
-                Vector3 kPos = default;
-                Quaternion kRot = default;
-                kinematicController_.GetTransform(ref kPos, ref kRot);
-                var matKC = new Matrix3x4(kPos, kRot, Vector3.One);
+            //    // add delta
+            //    Vector3 kPos = default;
+            //    Quaternion kRot = default;
+            //    kinematicController_.GetTransform(ref kPos, ref kRot);
+            //    var matKC = new Matrix3x4(kPos, kRot, Vector3.One);
 
-                // update
-                matKC = delta * matKC;
-                kinematicController_.SetTransform(matKC.Translation, matKC.Rotation);
+            //    // update
+            //    matKC = delta * matKC;
+            //    kinematicController_.SetTransform(matKC.Translation, matKC.Rotation);
 
-                // update yaw control (directly rotates char)
-                Controls.Yaw += delta.Rotation.YawAngle;
-            }
+            //    // update yaw control (directly rotates char)
+            //    Controls.Yaw += delta.Rotation.YawAngle;
+            //}
 
             // update node position
-            var nodeWorldPosition = kinematicController_.GetPosition();
-            if (nodeWorldPosition.IsNaN)
-                throw new ApplicationException("Wrong position!");
-            Node.WorldPosition = nodeWorldPosition;
+            //var nodeWorldPosition = kinematicController_.GetPosition();
+            //if (nodeWorldPosition.IsNaN)
+            //    throw new ApplicationException("Wrong position!");
+            //Node.WorldPosition = nodeWorldPosition;
 
             // shift and clear
             movingData_[1] = movingData_[0];
