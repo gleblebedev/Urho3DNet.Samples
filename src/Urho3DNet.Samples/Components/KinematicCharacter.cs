@@ -125,12 +125,9 @@ namespace Urho3DNet.Samples
             {
                 if (jumpStarted_)
                 {
-                    if (animController_.IsAtEnd("Models/Mutant/Mutant_Jump1.ani"))
-                    {
-                        animController_.PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, true, 0.3f);
-                        animController_.SetTime("Models/Mutant/Mutant_Jump1.ani", 0);
-                        jumpStarted_ = false;
-                    }
+                    animController_.PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, true, 0.3f);
+                    animController_.SetTime("Models/Mutant/Mutant_Jump1.ani", 0);
+                    jumpStarted_ = false;
                 }
                 else
                 {
