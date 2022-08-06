@@ -338,7 +338,7 @@ namespace Urho3DNet.Samples
             hitPos = Vector3.Zero;
 
             var ui = GetSubsystem<UI>();
-            var pos = ui.CursorPosition;
+            var pos = ui.UICursorPosition;
             // Check the cursor is visible and there is no UI element in front of the cursor
             if (!ui.Cursor.IsVisible || ui.GetElementAt(pos, true) != null)
                 return false;

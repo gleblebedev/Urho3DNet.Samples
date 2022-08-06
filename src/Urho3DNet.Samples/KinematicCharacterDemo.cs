@@ -185,9 +185,9 @@ namespace Urho3DNet.Samples
             // and keeps it alive as long as it's not removed from the hierarchy
             character_ = objectNode.CreateComponent<KinematicCharacter>();
             kinematicCharacter_ = objectNode.CreateComponent<KinematicCharacterController>();
-            kinematicCharacter_.SetDiameter(0.7f);
-            kinematicCharacter_.SetHeight(1.8f);
-            kinematicCharacter_.SetOffset(new Vector3(0.0f, 0.9f, 0.0f));
+            kinematicCharacter_.Diameter = (0.7f);
+            kinematicCharacter_.Height = (1.8f);
+            kinematicCharacter_.Offset = (new Vector3(0.0f, 0.9f, 0.0f));
         }
 
         private void CreateInstructions()

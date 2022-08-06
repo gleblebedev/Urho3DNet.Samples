@@ -103,6 +103,8 @@ namespace Urho3DNet.Samples
             RegisterSample<DynamicGeometry>();
             RegisterSample<NATPunchtrough>(); //52
             RegisterSample<LANDiscovery>(); //53
+            RegisterSample<ConfigSample>();
+            Context.RegisterFactory<SampleConfigFile>();
 
             base.Start();
         }

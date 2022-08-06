@@ -403,10 +403,10 @@ namespace Urho3DNet.Samples
                     controls.Set(CTRL_RIGHT, input.GetKeyDown(Key.KeyD));
                 }
 
-                serverConnection.SetControls(controls);
+                //serverConnection.SetControls(controls);
                 // In case the server wants to do position-based interest management using the NetworkPriority components, we should also
                 // tell it our observer (camera) position. In this sample it is not in use, but eg. the NinjaSnowWar game uses it
-                serverConnection.Position = CameraNode.Position;
+                //serverConnection.Position = CameraNode.Position;
             }
             // Server: apply controls to client objects
             else if (network.IsServerRunning)
@@ -424,7 +424,7 @@ namespace Urho3DNet.Samples
                         var body = ballNode.GetComponent<RigidBody>();
 
                         // Get the last controls sent by the client
-                        var controls = connection.Controls;
+                        var controls = new Controls();// connection.Controls;
                         // Torque is relative to the forward vector
                         var rotation = new Quaternion(0.0f, controls.Yaw, 0.0f);
 
@@ -469,14 +469,14 @@ namespace Urho3DNet.Samples
             if (serverConnection != null)
             {
                 serverConnection.Disconnect();
-                Scene.Clear(true, false);
+                Scene.Clear();
                 clientObjectID_ = 0;
             }
             // Or if we were running a server, stop it
             else if (network.IsServerRunning)
             {
                 network.StopServer();
-                Scene.Clear(true, false);
+                Scene.Clear();
             }
 
             UpdateButtons();

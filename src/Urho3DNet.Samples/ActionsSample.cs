@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Urho3DNet.Actions;
 
 namespace Urho3DNet.Samples
 {
@@ -14,7 +13,7 @@ namespace Urho3DNet.Samples
 
         public ActionsSample(Context context) : base(context)
         {
-            _actionManager = new ActionManager();
+            _actionManager = new ActionManager(context);
         }
 
         public override void Start()
@@ -59,15 +58,12 @@ namespace Urho3DNet.Samples
 
             nodeDiff.Decompose(out var translation, out var rotation, out var scale);
             var angles = rotation.EulerAngles;
-            ActionBuilder<Node>
-                .Build()
+            _actionManager.AddAction(
+            new ActionBuilder(Context)
                 .MoveBy(2.0f, translation)
-                .RotateBy(2.0f, angles.X, angles.Y, angles.Z)
-                //.MoveTo(2.0f, translation)
-                //.RotateTo(2.0f, angles.X, angles.Y, angles.Z)
-                .InParallel()
-                .EaseElasticOut()
-                .Complete().Run(_actionManager, _boxNode);
+                .Also(new ActionBuilder(Context).RotateBy(2.0f, new Quaternion(angles)).Build())
+                .ElasticOut()
+                .Build(), target);
         }
 
         public override void Stop()
